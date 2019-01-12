@@ -11,15 +11,53 @@
       line-height: 28px;
       font-size: 20px;
     }
+    #params {
+      font-family: monospace;
+      list-style: none;
+      margin-left:5px;
+      padding: 0px;
+    }
+    li {
+      display: block;
+      margin-top:10px;
+      background-color:#555;
+      border-radius: 5px;
+      padding: 5px;
+    }
+
+    input {
+      display: inline-block;
+      font-size:23px;
+      font-weight: bold;
+      text-align:center;
+      width:38px;
+      padding: 5px;
+      border-radius: 5px;
+    }
+    .cgcheckbox {
+      zoom:1.4;
+    }
+
+    #instructions {
+      color:#fff;
+    }
+
   </style>
 </head>
 <body>
+  <ul id='params'>
 
-  Notes Per Pattern: <input type='number' id='notesPerPatternId' value=3> <br />
-  Pattern Speed (Seconds): <input type='number' id='patternSpeedId' value=.7> <br />
-  Loop Patterns <input type='checkbox' id='loopCheckBoxId' > <br />
-  Auto Advance (Req: Loop) <input type='checkbox' id='autoAdvanceCheckBoxId' > <br />
-  Loops until Auto Advance (Req: Auto Advance): <input type='number' id='numLoopsId' value=8> <br />
+    <li><input type='number' id='notesPerPatternId' value=3> Notes Per Pattern </li>
+    <li><input type='number' id='patternSpeedId' value=.7>  Pattern Speed (Seconds)</li>
+    <li><input class='cgcheckbox' type='checkbox' id='loopCheckBoxId' checked> Loop Patterns </li>
+    <li><input class='cgcheckbox' type='checkbox' id='autoAdvanceCheckBoxId' checked> Auto Advance (Req: Loop)</li>
+    <li><input type='number' id='numLoopsId' value=8> Loops until Auto Advance (Req: Auto Advance):  </li>
+  </ul>
+  <div id='instructions'>
+    <h1>Instructions:</h1>
+    <div>Check both loop boxes. Press spacebar to begin. Match the looping phrase on your instrument before the pattern shifts. Adjust values for difficulty. Avoid insanity.</div>
+  </div>
+
 
   <!-- shims -->
   <script src="./index_files/Base64.js" type="text/javascript"></script>
