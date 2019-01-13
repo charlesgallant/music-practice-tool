@@ -45,8 +45,11 @@
   </style>
 </head>
 <body>
+  <div id='controls'>
+    <button id='start'>START</button>
+    <button id='stop'>STOP</button>
+  </div>
   <ul id='params'>
-
     <li><input type='number' id='notesPerPatternId' value=3> Notes Per Pattern </li>
     <li><input type='number' id='patternSpeedId' value=.7>  Pattern Speed (Seconds)</li>
     <li><input class='cgcheckbox' type='checkbox' id='loopCheckBoxId' checked> Loop Patterns </li>
@@ -105,7 +108,7 @@ $(document).ready(function(){
   input_numLoopsInput       = $('#numLoopsId');
   input_numNotesInput       = $('#numNotesPerPatternId');
 
-  var notesPerPattern             = 3;//todo
+  var notesPerPattern             = 3; //todo
   var loopStepDurationSeconds     = parseFloat(input_patternSpeedInput.val());
   var noteDurationSeconds         = loopStepDurationSeconds/notesPerPattern;
   var loopsUntilAutoAdvance       = parseInt(input_numLoopsInput.val());
@@ -116,8 +119,9 @@ $(document).ready(function(){
   var newPattern     = new Array();
   var currentPattern = new Array();
 
-  var first_press = false;
   var ignoreInput = false;
+
+  var isPlaying = false;
 
   var bufferTimeoutVar;
   var inputTimeoutVar;
@@ -134,51 +138,42 @@ $(document).ready(function(){
     },
     onsuccess: function() {
       
-      var note = 50; // the MIDI note
-      var velocity = 127; // how hard the note hits
-      var delay = 0; // play one note every quarter second
+      var note = 50;          // the MIDI note value / pitch
+      var velocity = 127;     // how hard the note hits
+      var noteSustain = 0.75; // How long to wait before sending noteOff 
+      var delay = 0;          // play one note every quarter second
 
       // play the note
       MIDI.setVolume(0, 127);
       MIDI.noteOn   (0, note, velocity, delay);
-      MIDI.noteOff  (0, note, delay + 0.75);
+      MIDI.noteOff  (0, note, delay + noteSustain);
       
     }
   });
 
 
-  $('#autoAdvanceCheckBoxId,#loopCheckBoxId').change(function(event) {
+  $('#start').click(startButtonPressed);
+  $('#stop').click(stopButtonPressed);
+
+  $('#autoAdvanceCheckBoxId, #loopCheckBoxId').change(function(event) {
     $(event.target).blur();
   });
 
-  window.onkeydown = function() {
-    keyPressed();
-
-  };
-  function keyPressed() {
+  window.onkeyup = function(e) {
+    console.log("!! " + e.key);
     if(ignoreInput) return;
-
-    MIDI.stopAllNotes();
-    if(first_press) {
-        // they have already clicked once, we have a double
-        playNewPattern();
-        first_press = false;
-        clearTimeout(inputTimeoutVar);
-    } else {
-        // this is their first key press
-        first_press = true;
-
-        // if they don't click again in half a second, reset
-        inputTimeoutVar = window.setTimeout(function() { timerDone(); }, 500);
+    if(e.key === " ") {
+      if( isPlaying == false ) {
+        startButtonPressed();
+      }else{
+        stopButtonPressed();
+      }
 
     }
-  }
 
-  function timerDone(){
-    replayCurrentPattern();
-    first_press = false;
+  };
 
-  }
+
   function bufferStart(){
     ignoreInput = true;
     clearTimeout(bufferTimeoutVar);
@@ -190,10 +185,28 @@ $(document).ready(function(){
   function bufferComplete(){
     ignoreInput = false;
   }
+//-------------------------------------------------------
+
+  function startButtonPressed(){
+    console.log(">startButtonPressed<");
+    if (isPlaying) return;
+
+    MIDI.stopAllNotes();
+
+    isPlaying = true;
+    playNewPattern();
+    clearTimeout(inputTimeoutVar);
+  
+  }
+  function stopButtonPressed(){
+    console.log(">stopButtonPressed<");
+    clearTimeout(loopTimeoutVar);
+    MIDI.stopAllNotes();
+    isPlaying = false;
+  }
 
 
-
-
+//-------------------------------------------------------
   function CreateNewPattern(){
     newPattern = [ parseInt(rand(68,60)),
                    parseInt(rand(68,60)),
