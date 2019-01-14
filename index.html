@@ -11,6 +11,11 @@
       line-height: 28px;
       font-size: 20px;
     }
+
+    body.playing {
+      background-color:#003366;
+    }
+
     #params {
       font-family: monospace;
       list-style: none;
@@ -20,7 +25,8 @@
     li {
       display: block;
       margin-top:10px;
-      background-color:#555;
+      /*background-color:#fff;*/
+      background-color: rgba(255,255,255,0.15);
       border-radius: 5px;
       padding: 5px;
     }
@@ -41,14 +47,24 @@
     #instructions {
       color:#fff;
     }
+    button {
+      height: 60px;
+      width: 160px;
+      border-radius: 10px;
+      font-size:18px;
+    }
+    button.disabled {
+      opacity: .3;
+    }
 
   </style>
 </head>
 <body>
-  <div id='controls'>
-    <button id='start'>START</button>
-    <button id='stop'>STOP</button>
+  <div id='instructions'>
+    <h1>Instructions:</h1>
+    <div>Check both loop boxes. Press spacebar to begin. Match the looping phrase on your instrument before the pattern shifts. Adjust values for difficulty. Avoid insanity.</div>
   </div>
+
   <ul id='params'>
     <li><input type='number' id='notesPerPatternId' value=3> Notes Per Pattern </li>
     <li><input type='number' id='patternSpeedId' value=.7>  Pattern Speed (Seconds)</li>
@@ -56,11 +72,11 @@
     <li><input class='cgcheckbox' type='checkbox' id='autoAdvanceCheckBoxId' checked> Auto Advance (Req: Loop)</li>
     <li><input type='number' id='numLoopsId' value=8> Loops until Auto Advance (Req: Auto Advance):  </li>
   </ul>
-  <div id='instructions'>
-    <h1>Instructions:</h1>
-    <div>Check both loop boxes. Press spacebar to begin. Match the looping phrase on your instrument before the pattern shifts. Adjust values for difficulty. Avoid insanity.</div>
-  </div>
 
+  <div id='controls'>
+    <button id='start'>START</button>
+    <button id='stop'>STOP</button>
+  </div>
 
   <!-- shims -->
   <script src="./index_files/Base64.js" type="text/javascript"></script>
@@ -95,7 +111,6 @@ Next Steps:
 
  - Think about steps and pauses between notes:
    - Hear a note, pause, try to hit it
-
 */
 $(document).ready(function(){
 
@@ -108,12 +123,12 @@ $(document).ready(function(){
   input_numLoopsInput       = $('#numLoopsId');
   input_numNotesInput       = $('#numNotesPerPatternId');
 
-  var notesPerPattern             = 3; //todo
-  var loopStepDurationSeconds     = parseFloat(input_patternSpeedInput.val());
-  var noteDurationSeconds         = loopStepDurationSeconds/notesPerPattern;
-  var loopsUntilAutoAdvance       = parseInt(input_numLoopsInput.val());
-  var loopIsChecked               = input_loopCheckbox.checked;
-  var autoAdvanceIsChecked        = input_autoAdvanceCheckbox.checked;
+  var notesPerPattern         = 3; //todo
+  var loopStepDurationSeconds = parseFloat(input_patternSpeedInput.val());
+  var noteDurationSeconds     = loopStepDurationSeconds/notesPerPattern;
+  var loopsUntilAutoAdvance   = parseInt(input_numLoopsInput.val());
+  var loopIsChecked           = input_loopCheckbox.checked;
+  var autoAdvanceIsChecked    = input_autoAdvanceCheckbox.checked;
 
   //Junk
   var newPattern     = new Array();
@@ -138,15 +153,15 @@ $(document).ready(function(){
     },
     onsuccess: function() {
       
-      var note = 50;          // the MIDI note value / pitch
-      var velocity = 127;     // how hard the note hits
+      var note        = 50;   // the MIDI note value / pitch
+      var velocity    = 127;  // how hard the note hits
       var noteSustain = 0.75; // How long to wait before sending noteOff 
-      var delay = 0;          // play one note every quarter second
+      var delay       = 0;    // play one note every quarter second
 
       // play the note
-      MIDI.setVolume(0, 127);
-      MIDI.noteOn   (0, note, velocity, delay);
-      MIDI.noteOff  (0, note, delay + noteSustain);
+      // MIDI.setVolume(0, 127);
+      // MIDI.noteOn   (0, note, velocity, delay);
+      // MIDI.noteOff  (0, note, delay + noteSustain);
       
     }
   });
@@ -154,8 +169,14 @@ $(document).ready(function(){
 
   $('#start').click(startButtonPressed);
   $('#stop').click(stopButtonPressed);
+  $('#stop').addClass('disabled');
+
 
   $('#autoAdvanceCheckBoxId, #loopCheckBoxId').change(function(event) {
+    $(event.target).blur();
+  });
+
+  $('button').focus(function(event) {
     $(event.target).blur();
   });
 
@@ -168,9 +189,7 @@ $(document).ready(function(){
       }else{
         stopButtonPressed();
       }
-
     }
-
   };
 
 
@@ -192,10 +211,14 @@ $(document).ready(function(){
     if (isPlaying) return;
 
     MIDI.stopAllNotes();
-
     isPlaying = true;
     playNewPattern();
     clearTimeout(inputTimeoutVar);
+
+    //Aesthetic things
+    $("body").addClass('playing');
+    $('#start').addClass('disabled');
+    $('#stop').removeClass('disabled');
   
   }
   function stopButtonPressed(){
@@ -203,6 +226,12 @@ $(document).ready(function(){
     clearTimeout(loopTimeoutVar);
     MIDI.stopAllNotes();
     isPlaying = false;
+
+    //Aesthetic things
+    $("body").removeClass('playing');
+    $('#start').removeClass('disabled');
+    $('#stop').addClass('disabled');
+
   }
 
 
