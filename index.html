@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- saved from url=(0039)https://galactic.ink/midi-js/Basic.html -->
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -82,7 +81,7 @@
   </div>
 
   <ul id='params'>
-    <li><input type='number' id='notesPerPatternId' value=3> Notes Per Pattern </li>
+    <li><input type='number' id='numNotesPerPatternId' value=3> Notes Per Pattern </li>
     <li><input type='number' id='patternSpeedId' value=.7>  Pattern Speed (Seconds)</li>
     <li><input class='cgcheckbox' type='checkbox' id='loopCheckBoxId' checked> Loop Patterns </li>
     <li><input class='cgcheckbox' type='checkbox' id='autoAdvanceCheckBoxId' checked> Auto Advance (Req: Loop)</li>
@@ -136,27 +135,63 @@ $(document).ready(function(){
 
 
   //Inputs
-  input_loopCheckbox        = $('#notesPerPatternId');
+  input_numNotesInput       = $('#numNotesPerPatternId');
   input_loopCheckbox        = $('#loopCheckBoxId');
   input_autoAdvanceCheckbox = $('#autoAdvanceCheckBoxId');
   input_patternSpeedInput   = $('#patternSpeedId');
   input_numLoopsInput       = $('#numLoopsId');
-  input_numNotesInput       = $('#numNotesPerPatternId');
+ // input_numNotesInput       = $('#numNotesPerPatternId');
 
-  var notesPerPattern         = 3; //todo
-  var loopStepDurationSeconds = parseFloat(input_patternSpeedInput.val());
-  var noteDurationSeconds     = loopStepDurationSeconds/notesPerPattern;
-  var loopsUntilAutoAdvance   = parseInt(input_numLoopsInput.val());
-  var loopIsChecked           = input_loopCheckbox.checked;
-  var autoAdvanceIsChecked    = input_autoAdvanceCheckbox.checked;
+  var notesPerPattern;
+  var loopStepDurationSeconds;
+  var noteDurationSeconds;
+  var loopsUntilAutoAdvance;
+  var loopIsChecked;
+  var autoAdvanceIsChecked;
 
-  //Junk
+
+  function pollAllParameters(){
+    //console.log("pollAllParameters");
+
+    // Notes Per Pattern =====================================================
+    notesPerPattern = parseInt(input_numNotesInput.val());
+
+    if(notesPerPattern < 1) {
+      notesPerPattern = 1;
+      input_numNotesInput.val(1);
+    }
+
+    // Loop Step Duration (Seconds) ==========================================
+    loopStepDurationSeconds = parseFloat(input_patternSpeedInput.val());
+
+    if(loopStepDurationSeconds < 0.1) {
+      loopStepDurationSeconds = 0.1;
+      input_patternSpeedInput.val(0.1);
+    }
+
+    // Note Duration (no user input) =========================================
+    noteDurationSeconds     = loopStepDurationSeconds/notesPerPattern;
+
+    // Loop Step Duration (Seconds) ==========================================
+    loopsUntilAutoAdvance   = parseInt(input_numLoopsInput.val());
+    if(loopsUntilAutoAdvance < 1) {
+      loopsUntilAutoAdvance = 1;
+      input_numLoopsInput.val(1);
+    }
+
+    loopIsChecked           = input_loopCheckbox.checked;
+    autoAdvanceIsChecked    = input_autoAdvanceCheckbox.checked;
+
+  };
+
+  pollAllParameters();
+
+  //
   var newPattern     = new Array();
   var currentPattern = new Array();
 
   var ignoreInput = false;
-
-  var isPlaying = false;
+  var isPlaying   = false;
 
   var bufferTimeoutVar;
   var inputTimeoutVar;
@@ -164,6 +199,9 @@ $(document).ready(function(){
 
   loopTimesPlayed = 0;
 
+  //====================================================
+  //     Inialize MIDI plugin
+  //====================================================
   MIDI.loadPlugin({
     soundfontUrl: "./soundfont/",
     instrument: "acoustic_grand_piano",
@@ -186,29 +224,26 @@ $(document).ready(function(){
     }
   });
 
-
+  //====================================================
+  //     UI Events
+  //====================================================
   $('#start').click(startButtonPressed);
   $('#stop').click(stopButtonPressed);
   $('#stop').addClass('disabled');
 
 
-  $('#autoAdvanceCheckBoxId, #loopCheckBoxId').change(function(event) {
+
+  $('#params input').change(function(event){
     $(event.target).blur();
     stopButtonPressed();
+    pollAllParameters();
+
   });
 
-  $('button').focus(function(event) {
+  $('#params input').click(function(event){
     $(event.target).blur();
+    //$(this).change();
   });
-
-  $('#numLoopsId').change(function(event) {
-    $(event.target).blur();
-    loopsUntilAutoAdvance   = parseInt(input_numLoopsInput.val());
-    stopButtonPressed();
-  });
-
-
-
 
   window.onkeyup = function(e) {
     console.log("!! " + e.key);
@@ -223,8 +258,9 @@ $(document).ready(function(){
   };
 
 
-  function calculateDurations(){};
-//-------------------------------------------------------
+  //====================================================
+  //     Start / Stop
+  //====================================================
 
   function startButtonPressed(){
     if (isPlaying) return;
@@ -232,6 +268,8 @@ $(document).ready(function(){
 
     MIDI.stopAllNotes();
     isPlaying = true;
+
+    pollAllParameters();
     playNewPattern();
     clearTimeout(inputTimeoutVar);
 
@@ -259,11 +297,20 @@ $(document).ready(function(){
   }
 
 
-//-------------------------------------------------------
+  //====================================================
+  //     Pattern Creation / Playback / Loop
+  //====================================================
   function CreateNewPattern(){
-    newPattern = [ parseInt(rand(68,60)),
+    newPattern = [];
+
+
+/*    newPattern = [ parseInt(rand(68,60)),
                    parseInt(rand(68,60)),
                    parseInt(rand(68,60)) ];
+*/
+    for (var i = 0; i < notesPerPattern; i++) {
+      newPattern.push( parseInt(rand(68,60)) );
+    }
     currentPattern = newPattern;
     console.log(newPattern);
   }
@@ -327,10 +374,9 @@ $(document).ready(function(){
     
   }
 
-
-
-
-  //Loopdots
+  //====================================================
+  //     Loopdots
+  //====================================================
 
   function drawAllLoopDots(){
     var numDots = loopsUntilAutoAdvance;
