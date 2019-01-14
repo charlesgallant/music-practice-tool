@@ -36,7 +36,7 @@
       font-size:23px;
       font-weight: bold;
       text-align:center;
-      width:38px;
+      width:60px;
       padding: 5px;
       border-radius: 5px;
     }
@@ -57,12 +57,28 @@
       opacity: .3;
     }
 
+    .loopdot{
+      display:inline-block;
+      width:20px;
+      height:5px;
+      background-color:rgba(255,255,255,0.15);
+
+    }
+
+    .highlighted{
+      background-color:rgba(255,255,255,1.0);
+    }
+
+    .firstdot{
+     background-color:rgba(255,255,255,1.0); /*<-- somewhat hacky -- */ 
+    }
+
   </style>
 </head>
 <body>
   <div id='instructions'>
     <h1>Instructions:</h1>
-    <div>Check both loop boxes. Press spacebar to begin. Match the looping phrase on your instrument before the pattern shifts. Adjust values for difficulty. Avoid insanity.</div>
+    <div>Press spacebar or click Start to begin. Match the looping phrase on your instrument before the pattern shifts. Adjust values for difficulty. Avoid insanity.</div>
   </div>
 
   <ul id='params'>
@@ -72,6 +88,10 @@
     <li><input class='cgcheckbox' type='checkbox' id='autoAdvanceCheckBoxId' checked> Auto Advance (Req: Loop)</li>
     <li><input type='number' id='numLoopsId' value=8> Loops until Auto Advance (Req: Auto Advance):  </li>
   </ul>
+
+  <div id='loopdots'>
+    
+  </div>
 
   <div id='controls'>
     <button id='start'>START</button>
@@ -174,11 +194,21 @@ $(document).ready(function(){
 
   $('#autoAdvanceCheckBoxId, #loopCheckBoxId').change(function(event) {
     $(event.target).blur();
+    stopButtonPressed();
   });
 
   $('button').focus(function(event) {
     $(event.target).blur();
   });
+
+  $('#numLoopsId').change(function(event) {
+    $(event.target).blur();
+    loopsUntilAutoAdvance   = parseInt(input_numLoopsInput.val());
+    stopButtonPressed();
+  });
+
+
+
 
   window.onkeyup = function(e) {
     console.log("!! " + e.key);
@@ -193,22 +223,12 @@ $(document).ready(function(){
   };
 
 
-  function bufferStart(){
-    ignoreInput = true;
-    clearTimeout(bufferTimeoutVar);
-    clearTimeout(loopTimeoutVar);
-
-    bufferTimeoutVar = window.setTimeout(function() { bufferComplete(); }, noteDurationSeconds * currentPattern.length);
-  }
-
-  function bufferComplete(){
-    ignoreInput = false;
-  }
+  function calculateDurations(){};
 //-------------------------------------------------------
 
   function startButtonPressed(){
-    console.log(">startButtonPressed<");
     if (isPlaying) return;
+    console.log(">startButtonPressed<");
 
     MIDI.stopAllNotes();
     isPlaying = true;
@@ -219,6 +239,8 @@ $(document).ready(function(){
     $("body").addClass('playing');
     $('#start').addClass('disabled');
     $('#stop').removeClass('disabled');
+
+    drawAllLoopDots();
   
   }
   function stopButtonPressed(){
@@ -226,11 +248,13 @@ $(document).ready(function(){
     clearTimeout(loopTimeoutVar);
     MIDI.stopAllNotes();
     isPlaying = false;
+    loopTimesPlayed = 0;
 
     //Aesthetic things
     $("body").removeClass('playing');
     $('#start').removeClass('disabled');
     $('#stop').addClass('disabled');
+    removeAllLoopDots();
 
   }
 
@@ -248,7 +272,8 @@ $(document).ready(function(){
     return Math.random() * (max - min) + min;
   }
 
-  function play(_pattern){
+  function play(){
+    console.log("play!");
     var n; //note
     var d; //delay
     
@@ -260,13 +285,11 @@ $(document).ready(function(){
       // MIDI.noteOff  (0, n, d + 0.5);
     }
 
-    bufferStart();
-
     if( input_loopCheckbox.is(':checked') ) loopPattern();
   }
 
   function playNewPattern(){
-//    console.log("playNewPattern");
+
     MIDI.stopAllNotes();
     clearTimeout(loopTimeoutVar);
     
@@ -276,7 +299,7 @@ $(document).ready(function(){
   }
 
   function replayCurrentPattern(){
-//    clearTimeout(loopTimeoutVar);
+    clearTimeout(loopTimeoutVar); //necessary?
     console.log("replayCurrentPattern");
     play();
 
@@ -289,18 +312,57 @@ $(document).ready(function(){
   function loopTick(){
     loopTimesPlayed++;
 
-    if(loopTimesPlayed > loopsUntilAutoAdvance){
+    if(loopTimesPlayed >= loopsUntilAutoAdvance){
       loopTimesPlayed = 0;
+      removeAllLoopDotsHighlights();
+
       if( input_autoAdvanceCheckbox.is(':checked') ){
         MIDI.stopAllNotes();
         playNewPattern();
       }
     }else{
-      replayCurrentPattern();   
+      replayCurrentPattern();
+      highlightLoopDot(loopTimesPlayed);
     }
     
   }
+
+
+
+
+  //Loopdots
+
+  function drawAllLoopDots(){
+    var numDots = loopsUntilAutoAdvance;
+    removeAllLoopDots();
+
+    for (var i = 0; i < numDots; i++) {
+      addLoopDot(i);
+    }
+
+  }
+
+  function addLoopDot(newId){
+    var newDiv = $("<div>");
+    $("#loopdots").append( newDiv );
+    newDiv.addClass( "loopdot" ).prop('id', 'ld_'+newId);
+    if(newId == 0) newDiv.addClass('firstdot');
+  }
   
+  function highlightLoopDot(newId){
+    $('#ld_'+newId).addClass('highlighted');
+  }
+
+  function removeAllLoopDots(){
+    $(".loopdot").remove();
+  }
+
+  function removeAllLoopDotsHighlights(){
+    $('.loopdot').removeClass('highlighted');
+  }
+  
+
+
 
 });
 
