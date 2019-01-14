@@ -104,7 +104,7 @@
     <li><input type='number'      id='patternSpeedId'        value=1 min=0 step=0.05>  Pattern Speed (Seconds)</li>
     <li><input type='checkbox'    id='loopCheckBoxId'        class='cgcheckbox' checked> Loop Patterns </li>
     <li><input type='checkbox'    id='autoAdvanceCheckBoxId' class='cgcheckbox' checked> Auto Advance (Req: Loop)</li>
-    <li><input type='number'      id='numLoopsId'            value=8> Loops until Auto Advance (Req: Auto Advance):  </li>
+    <li><input type='number'      id='numLoopsId'            value=8 min=0 step=1> Loops until Auto Advance (Req: Auto Advance)  </li>
   </ul>
 
   <div id='loopdots'></div>
@@ -208,8 +208,8 @@ $(document).ready(function(){
       input_numLoopsInput.val(1);
     }
 
-    loopIsChecked           = input_loopCheckbox.checked;
-    autoAdvanceIsChecked    = input_autoAdvanceCheckbox.checked;
+    loopIsChecked           = input_loopCheckbox.is(':checked');
+    autoAdvanceIsChecked    = input_autoAdvanceCheckbox.is(':checked');
 
   };
 
@@ -268,10 +268,10 @@ $(document).ready(function(){
 
   });
 
-  $('#params input').click(function(event){
+  //$('#params input').click(function(event){
     //$(event.target).blur();
     //$(this).change();
-  });
+  //});
 
   window.onkeyup = function(e) {
     console.log("!! " + e.key);
@@ -362,7 +362,11 @@ $(document).ready(function(){
       // MIDI.noteOff  (0, n, d + 0.5);
     }
 
-    if( input_loopCheckbox.is(':checked') ) loopPattern();
+    if( input_loopCheckbox.is(':checked') ){
+      loopPattern();
+    }else{
+      window.setTimeout(function() { stopButtonPressed(); }, d*1000);
+    }
   }
 
   function playNewPattern(){
@@ -396,6 +400,8 @@ $(document).ready(function(){
       if( input_autoAdvanceCheckbox.is(':checked') ){
         MIDI.stopAllNotes();
         playNewPattern();
+      } else {
+        stopButtonPressed();
       }
     }else{
       replayCurrentPattern();
