@@ -2,7 +2,10 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link href="./index_files/jquery/jquery-ui.min.css" rel="stylesheet">
+
   <style type="text/css">
+
     body {
       background-color: #333;
       color: #ccc;
@@ -24,7 +27,6 @@
     li {
       display: block;
       margin-top:10px;
-      /*background-color:#fff;*/
       background-color: rgba(255,255,255,0.15);
       border-radius: 5px;
       padding: 5px;
@@ -72,7 +74,19 @@
      background-color:rgba(255,255,255,1.0); /*<-- somewhat hacky -- */ 
     }
 
+    #slider-container{
+      margin-top:25px;
+      margin-left:10px;
+      width:300px;
+    }
+
+    #slider-label{
+      padding-bottom:5px;
+    }
+
   </style>
+
+
 </head>
 <body>
   <div id='instructions'>
@@ -88,14 +102,20 @@
     <li><input type='number' id='numLoopsId' value=8> Loops until Auto Advance (Req: Auto Advance):  </li>
   </ul>
 
-  <div id='loopdots'>
-    
-  </div>
+  <div id='loopdots'></div>
 
   <div id='controls'>
     <button id='start'>START</button>
     <button id='stop'>STOP</button>
+    <br />
+    
   </div>
+
+  <div id="slider-container">
+    <div id="slider-label">Volume</div>
+    <div id="slider"></div>
+  </div>
+  
 
   <!-- shims -->
   <script src="./index_files/Base64.js" type="text/javascript"></script>
@@ -111,7 +131,8 @@
   <!-- utils -->
   <script src="./index_files/dom_request_xhr.js" type="text/javascript"></script>
   <script src="./index_files/dom_request_script.js" type="text/javascript"></script>
-  <script src="./index_files/jquery-3.2.1.min.js" type="text/javascript"></script>
+  <script src="./index_files/jquery/jquery.js" type="text/javascript"></script>
+  <script src="./index_files/jquery/jquery-ui.min.js" type="text/javascript"></script>
 
 <script>
 
@@ -133,15 +154,18 @@ Next Steps:
 */
 $(document).ready(function(){
 
-
   //Inputs
   input_numNotesInput       = $('#numNotesPerPatternId');
   input_loopCheckbox        = $('#loopCheckBoxId');
   input_autoAdvanceCheckbox = $('#autoAdvanceCheckBoxId');
   input_patternSpeedInput   = $('#patternSpeedId');
   input_numLoopsInput       = $('#numLoopsId');
- // input_numNotesInput       = $('#numNotesPerPatternId');
 
+  $("#slider").slider();
+  //$(#slider).slider( "value" );
+
+  $( "#slider" ).slider({ value: 20 });
+  
   var notesPerPattern;
   var loopStepDurationSeconds;
   var noteDurationSeconds;
@@ -164,9 +188,9 @@ $(document).ready(function(){
     // Loop Step Duration (Seconds) ==========================================
     loopStepDurationSeconds = parseFloat(input_patternSpeedInput.val());
 
-    if(loopStepDurationSeconds < 0.1) {
-      loopStepDurationSeconds = 0.1;
-      input_patternSpeedInput.val(0.1);
+    if(loopStepDurationSeconds < 0.4) {
+      loopStepDurationSeconds = 0.4;
+      input_patternSpeedInput.val(0.4);
     }
 
     // Note Duration (no user input) =========================================
@@ -211,10 +235,10 @@ $(document).ready(function(){
     },
     onsuccess: function() {
       
-      var note        = 50;   // the MIDI note value / pitch
-      var velocity    = 127;  // how hard the note hits
-      var noteSustain = 0.75; // How long to wait before sending noteOff 
-      var delay       = 0;    // play one note every quarter second
+      // var note        = 50;   // the MIDI note value / pitch
+      // var velocity    = 127;  // how hard the note hits
+      // var noteSustain = 0.75; // How long to wait before sending noteOff 
+      // var delay       = 0;    // play one note every quarter second
 
       // play the note
       // MIDI.setVolume(0, 127);
@@ -232,7 +256,6 @@ $(document).ready(function(){
   $('#stop').addClass('disabled');
 
 
-
   $('#params input').change(function(event){
     $(event.target).blur();
     stopButtonPressed();
@@ -241,7 +264,7 @@ $(document).ready(function(){
   });
 
   $('#params input').click(function(event){
-    $(event.target).blur();
+    //$(event.target).blur();
     //$(this).change();
   });
 
@@ -323,12 +346,14 @@ $(document).ready(function(){
     console.log("play!");
     var n; //note
     var d; //delay
+    var volPercent = $("#slider").slider( "value" )/100;
+    var vol = 127 * volPercent;
     
     for (var i=0; i < currentPattern.length; i++) {
       n = currentPattern[i];
       d = i * noteDurationSeconds; //delay
 
-      MIDI.noteOn   (0, n, 127, d);
+      MIDI.noteOn   (0, n, vol, d);
       // MIDI.noteOff  (0, n, d + 0.5);
     }
 
