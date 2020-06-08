@@ -103,6 +103,7 @@
     <li><input type='number'      id='numNotesPerPatternId'  value=3 min=0 max=10 step=1> Notes Per Pattern </li>
     <li><input type='number'      id='patternSpeedId'        value=1 min=0 step=0.05>  Pattern Duration (Seconds)</li>
     <li><input type='checkbox'    id='loopCheckBoxId'        class='cgcheckbox' checked> Loop Patterns </li>
+    <li><input type='checkbox'    id='avoidDupesCheckBoxId'  class='cgcheckbox' checked> Avoid Duplicate Notes </li>
     <li><input type='checkbox'    id='autoAdvanceCheckBoxId' class='cgcheckbox' checked> Auto Advance (Req: Loop)</li>
     <li><input type='number'      id='numLoopsId'            value=8 min=0 step=1> Loops until Auto Advance (Req: Auto Advance)  </li>
   </ul>
@@ -162,6 +163,7 @@ $(document).ready(function(){
   //Inputs
   input_numNotesInput       = $('#numNotesPerPatternId');
   input_loopCheckbox        = $('#loopCheckBoxId');
+  input_avoidDupesCheckbox  = $('#avoidDupesCheckBoxId');
   input_autoAdvanceCheckbox = $('#autoAdvanceCheckBoxId');
   input_patternSpeedInput   = $('#patternSpeedId');
   input_numLoopsInput       = $('#numLoopsId');
@@ -176,6 +178,7 @@ $(document).ready(function(){
   var noteDurationSeconds;
   var loopsUntilAutoAdvance;
   var loopIsChecked;
+  var avoidDupesIsChecked
   var autoAdvanceIsChecked;
 
 
@@ -209,6 +212,7 @@ $(document).ready(function(){
     }
 
     loopIsChecked           = input_loopCheckbox.is(':checked');
+    avoidDupesIsChecked     = input_avoidDupesCheckbox.is(':checked');
     autoAdvanceIsChecked    = input_autoAdvanceCheckbox.is(':checked');
 
   };
@@ -330,23 +334,17 @@ $(document).ready(function(){
   //====================================================
   function CreateNewPattern(){
     newPattern = [];
-
-
-    var lastRandomNote = 0;
-    var checkingDuplicates = false;
-
-    if(notesPerPattern == 2) checkingDuplicates = true;
     
     var r;
     var prevR;
 
     for (var i = 0; i < notesPerPattern; i++) {
-      if(checkingDuplicates) prevR = r;
+      if(avoidDupesIsChecked) prevR = r;
       r = parseInt(rand(68,60));
 
-      if(checkingDuplicates && prevR == r){
+      if(avoidDupesIsChecked && prevR == r){
         i--;
-        console.log("FOUND A DUPE");
+        console.log("Found a duplicate; re-running loop");
         continue;
       }
 
