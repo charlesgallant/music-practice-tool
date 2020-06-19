@@ -96,16 +96,18 @@
   <div id='instructions'>
     <h1>Music Practice Tool</h1>
     
-    <div><b>Chrome only</b>: Play along with the pattern on your instrument. Listen and match the phrase before the pattern shifts. Press Spacebar or click Start to begin. Adjust values for difficulty. Avoid insanity.</div>
+    <div><b>Chrome only</b>: This is a random note generation tool. Play along with the pattern on your instrument. Listen and match the phrase before the pattern shifts. Press Spacebar or click Start to begin. Adjust values for difficulty.</div>
   </div>
 
   <ul id='params'>
     <li><input type='number'      id='numNotesPerPatternId'  value=3 min=0 max=10 step=1> Notes Per Pattern </li>
+    <!--<li><input type='number'      id='minIntervalRangeId'    value=1 min=0 max=10 step=1> Minimum Semitones from 1st Note</li>
+    <li><input type='number'      id='maxIntervalRangeId'    value=12 min=0 max=20 step=1> Maximum Semitones from 1st Note</li> -->
     <li><input type='number'      id='patternSpeedId'        value=1 min=0 step=0.05>  Pattern Duration (Seconds)</li>
     <li><input type='checkbox'    id='loopCheckBoxId'        class='cgcheckbox' checked> Loop Patterns </li>
     <li><input type='checkbox'    id='avoidDupesCheckBoxId'  class='cgcheckbox' checked> Avoid Duplicate Successive Notes </li>
     <li><input type='checkbox'    id='autoAdvanceCheckBoxId' class='cgcheckbox' checked> Auto Advance (Req: Loop)</li>
-    <li><input type='number'      id='numLoopsId'            value=8 min=0 step=1> Loops until Auto Advance (Req: Auto Advance)  </li>
+    <li><input type='number'      id='numLoopsId'            value=2 min=0 step=1> Loops until Auto Advance (Req: Auto Advance)  </li>
   </ul>
 
   <div id='loopdots'></div>
@@ -328,8 +330,8 @@ $(document).ready(function(){
 
   }
 
-  var minimumSemitones = 6;//TEMP
-  var maximumSemitones = 7;//TEMP
+  var minimumSemitones = 1;//TEMP
+  var maximumSemitones = 9;//TEMP
 
   //====================================================
   //     Pattern Creation / Playback / Loop
@@ -351,19 +353,35 @@ $(document).ready(function(){
       return;  
     }
 
+    var ascDescBool = getRandomMultiplier();
+
     //Consider user inputs for range limits
-    var minimumRandomNoteValue = startingNote + minimumSemitones;
-    var maximumRandomNoteValue = startingNote + maximumSemitones + 1;
+    var minimumRandomNoteValue = startingNote + (minimumSemitones * ascDescBool);
+    var maximumRandomNoteValue = startingNote + (maximumSemitones * ascDescBool) + (1 * ascDescBool);
 
-    //If not, continue making notes based on min and max values
+    //console.log("ascDescBool = " + ascDescBool)
+
+    var loopRuns = 0;
+
+    //If more than one note pattern, continue making notes based on min and max values
     for (var i = 1; i < notesPerPattern; i++) {
-      if(avoidDupesIsChecked) prevR = r;
 
-      r = parseInt(rand(maximumRandomNoteValue, minimumRandomNoteValue));
 
+      //Save previous value for checking duplicates
+      if(avoidDupesIsChecked) prevR = r; 
+
+      //Generate a new random note!
+      r = parseInt(rand(minimumRandomNoteValue, maximumRandomNoteValue));
+
+
+      //Check for Duplicates, and re-run loop
       if(avoidDupesIsChecked && prevR == r){
         i--;
         console.log("Found a duplicate; re-running loop");
+
+        //Check for failures!
+        loopRuns++; if(loopRuns > 100) { console.log('Error: loop overflow'); return; }
+
         continue;
       }
 
@@ -376,6 +394,16 @@ $(document).ready(function(){
 
   function rand(min, max) {
     return Math.random() * (max - min) + min;
+  }
+
+
+  //There has to be a smarter way to do this...
+  function getRandomMultiplier() {
+    if ( Boolean(Math.round(Math.random())) ) {
+      return 1;
+    }else{
+      return -1;
+    }
   }
 
   function play(){
