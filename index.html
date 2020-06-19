@@ -96,7 +96,7 @@
   <div id='instructions'>
     <h1>Music Practice Tool</h1>
     
-    <div><b>Chrome only</b>: This is a random note generation tool. Play along with the pattern on your instrument. Listen and match the phrase before the pattern shifts. Press Spacebar or click Start to begin. Adjust values for difficulty.</div>
+    <div><b>Chrome only</b>: This is a random note generator. Play along with the pattern on your instrument. Listen and match the phrase before the pattern shifts. Press Spacebar or click Start to begin. Adjust values for difficulty.</div>
   </div>
 
   <ul id='params'>
@@ -369,6 +369,7 @@ $(document).ready(function(){
   function CreateNewPattern(){
     newPattern = [];
     
+    //Init var to hold new note, and also one for checking for duplicates
     var r;
     var prevR;
 
@@ -383,14 +384,16 @@ $(document).ready(function(){
       return;  
     }
 
+    //Allow random notes to be above or below the initial/root note,
+    // so that min/max ranges work as expected
     var ascDescBool = getRandomMultiplier();
 
     //Consider user inputs for range limits
     var minimumRandomNoteValue = startingNote + (minSemitones * ascDescBool);
     var maximumRandomNoteValue = startingNote + (maxSemitones * ascDescBool) + (1 * ascDescBool);
 
-    //console.log("ascDescBool = " + ascDescBool)
 
+    //Initialize the safeguard (error check)
     var loopRuns = 0;
 
     //If more than one note pattern, continue making notes based on min and max values
@@ -411,7 +414,6 @@ $(document).ready(function(){
 
         //Check for failures!
         loopRuns++; if(loopRuns > 100) { console.log('Error: loop overflow'); return; }
-
         continue;
       }
 
