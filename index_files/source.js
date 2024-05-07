@@ -27,8 +27,6 @@ $(document).ready(function(){
     input_numLoopsInput       = $('#numLoopsId');
   
     $("#slider").slider();
-    //$(#slider).slider( "value" );
-  
     $( "#slider" ).slider({ value: 20 });
     
     var notesPerPattern;
@@ -119,36 +117,89 @@ $(document).ready(function(){
     //====================================================
     let browserAudioContext;
     let osc;
-  
+    let oscGain;
+    let oscVelocityGain;
+    let oscillators = {};
+
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
   
     
   
-    function midiToFreq(){
-  
+    function midiToFreq(_n){
+      const a = 440;
+      return (a/32) * (2 ** ((_n-9) / 12));
     }
   
     //Start Context Button
     $('#audioStart').click(audioStartPressed);
   
+    function makeNoteId(){
+      return rand(0, 9999).toString();
+    }
+
     function audioStartPressed(){
+
+
       console.log('start audio context...');
       browserAudioContext = new AudioContext();
      
-      noteOn(60, 127);
+      //temporary place to play notes!
+
+      //Make a note id so we can access it in the stop function
+      var _id = makeNoteId();
+
+      var _delayInSeconds = 0.3333;
+      var _noteLength = 1;
+      noteOscOn(_id, 60, _delayInSeconds);
+
+      setTimeout(() => { noteOscOff(_id); }, (_delayInSeconds + _noteLength) * 1000);
     }
-  
-    function noteOn(_note, _velocity){
-      osc = browserAudioContext.createOscillator();
+
+//MIDI.noteOn   (0, note, velocity, delay);
+
+
+    function cueSingleNote(_note, _delay){
+      
+    }
+
+    function noteOscOn(_id, _note, _delay){
       console.log("Note On!");
-      osc.frequency.value = '440';
-      osc.connect(browserAudioContext.destination);
-      osc.start();
+      
+      //Initialize Oscillators (weird? each time?)
+      osc = browserAudioContext.createOscillator();
+      oscGain = browserAudioContext.createGain();
+
+      //Set unique values based on params
+      oscGain.gain.value = 0.01;
+      osc.frequency.value = midiToFreq(_note);
+      
+      osc.gain = oscGain;
+
+      //Connect Oscillators to context + gain, execute
+      oscillators[_id] = osc;
+      
+      osc.connect(oscGain);
+      oscGain.connect(browserAudioContext.destination);
+
+      var _startTime = browserAudioContext.currentTime + _delay;
+      osc.start(_startTime);
 
     }
   
-    function noteOff(_note){
+    function noteOscOff(_id){
+      osc = oscillators[_id];
       
+      //ramp down the gain
+      var _gainRef = osc.gain.gain;
+      _gainRef.setValueAtTime(_gainRef.value, browserAudioContext.currentTime);
+      _gainRef.exponentialRampToValueAtTime(0.0001, browserAudioContext.currentTime + 0.5);
+
+      //clean up the note
+      setTimeout(() => {
+        osc.stop();
+        osc.disconnect();
+      }, "500");
+      delete oscillators[_id];
     }
   
     
@@ -336,8 +387,12 @@ $(document).ready(function(){
       console.log("play!");
       var n; //note
       var d; //delay
-      var volPercent = $("#slider").slider( "value" )/200;
-      var vol = 127.0 * volPercent;
+      
+      //var volPercent = $("#slider").slider( "value" )/200;
+      //var vol = 127.0 * volPercent;
+
+      var volPercent = $("#slider").slider( "value" );
+      var vol = 100.0 / volPercent;
       
       for (var i=0; i < currentPattern.length; i++) {
         n = currentPattern[i];
