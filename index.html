@@ -57,11 +57,19 @@
       opacity: .3;
     }
 
+    #loopdots {
+      margin-left:6px;
+      position: absolute;
+      margin-top:-10px;
+    }
+
     .loopdot{
       display:inline-block;
-      width:20px;
-      height:5px;
+      width: 35px;
+      height:4px;
       background-color:rgba(255,255,255,0.15);
+      border:solid 1px #003366;
+      border-radius: 3px;
 
     }
 
@@ -127,7 +135,6 @@
     </div>
 
     <ul id='params'>
-      
       <li><input type='number'      id='patternSpeedId'        value=1.7 min=0 step=0.05> Pattern Duration (Seconds)</li>
       <li><input type='number'      id='numNotesPerPatternId'  value=3 min=0 max=10 step=1> Notes Per Pattern </li>  
       <li><input type='number'      id='minSemitonesId' value=1 min=0 max=50 step=1><input type='number' id='maxSemitonesId' value=5 min=0 max=50 step=1> Min / Max Semitones from 1st Note</li>
@@ -135,7 +142,6 @@
       <li><input type='checkbox'    id='loopCheckBoxId'        class='cgcheckbox' checked> Loop Patterns </li>
       <li><input type='checkbox'    id='autoAdvanceCheckBoxId' class='cgcheckbox' checked> Auto Advance (Req: Loop)</li>
       <li><input type='number'      id='numLoopsId'            value=4 min=0 step=1> Loops until Auto Advance (Req: Auto Advance)  </li>
-
     </ul>
 
     <div id='loopdots'></div>

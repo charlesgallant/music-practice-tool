@@ -110,7 +110,6 @@ $(document).ready(function(){
     var ignoreInput = false;
     var isPlaying   = false;
   
-    var bufferTimeoutVar;
     var inputTimeoutVar;
     var loopTimeoutVar;
   
@@ -254,12 +253,9 @@ $(document).ready(function(){
 
     function startButtonPressed(){
       if (isPlaying) return;
-
-      //CG: NeedsMidi Version
-      //MIDI.stopAllNotes();
-      stopAllNotes();
-
       console.log(">startButtonPressed<");
+
+      stopAllNotes();
 
       isPlaying = true;
   
@@ -270,6 +266,7 @@ $(document).ready(function(){
       //Aesthetic things
       $("body").addClass('playing');
       $('#start').addClass('disabled');
+      $('#start').text("RUNNING...");
       $('#stop').removeClass('disabled');
   
       drawAllLoopDots();
@@ -279,8 +276,6 @@ $(document).ready(function(){
       console.log(">stopButtonPressed<");
       clearTimeout(loopTimeoutVar);
   
-      //CG: NeedsMidi Version
-      //MIDI.stopAllNotes();
       stopAllNotes();
   
       isPlaying = false;
@@ -289,6 +284,7 @@ $(document).ready(function(){
       //Aesthetic things
       $("body").removeClass('playing');
       $('#start').removeClass('disabled');
+      $('#start').text("PLAY");
       $('#stop').addClass('disabled');
       removeAllLoopDots();
   
@@ -330,7 +326,6 @@ $(document).ready(function(){
   
       //If more than one note pattern, continue making notes based on min and max values
       for (var i = 1; i < notesPerPattern; i++) {
-  
   
         //Save previous value for checking duplicates
         if(avoidDupesIsChecked) prevR = r; 
@@ -383,11 +378,8 @@ $(document).ready(function(){
       for (var i=0; i < currentPattern.length; i++) {
         n = currentPattern[i];
         d = i * noteDurationSeconds; //delay
-  
-        //CG: NeedsMidi Version
-        //MIDI.noteOn   (0, n, vol, d);
+        //Cue the Note!
         cueSingleNote(n, volPercent, d);
-  
       }
   
       if( input_loopCheckbox.is(':checked') ){
@@ -398,15 +390,10 @@ $(document).ready(function(){
     }
   
     function playNewPattern(){
-      //CG: NeedsMidi Version
-      //MIDI.stopAllNotes();
-      //stopAllNotes();
-
+      //stopAllNotes(); Removing this from here; Not Necessary
       clearTimeout(loopTimeoutVar);
-      
       CreateNewPattern();
       play();
-  
     }
   
     function replayCurrentPattern(){
@@ -429,8 +416,6 @@ $(document).ready(function(){
   
         if( input_autoAdvanceCheckbox.is(':checked') ){
   
-          //CG: NeedsMidi Version
-          //MIDI.stopAllNotes();
           stopAllNotes();
           playNewPattern();
         } else {
