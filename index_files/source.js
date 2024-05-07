@@ -118,7 +118,6 @@ $(document).ready(function(){
     let browserAudioContext;
     let osc;
     let oscGain;
-    let oscVelocityGain;
     let oscillators = {};
 
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -133,36 +132,37 @@ $(document).ready(function(){
     //Start Context Button
     $('#audioStart').click(audioStartPressed);
   
-    function makeNoteId(){
-      return rand(0, 9999).toString();
-    }
 
     function audioStartPressed(){
-
 
       console.log('start audio context...');
       browserAudioContext = new AudioContext();
      
+      
       //temporary place to play notes!
+      var _delayInSeconds = 0.0;
+      var _volPercent = $("#slider").slider( "value" ) / 100;
+      // var _vol = _volPercent/100;
+      cueSingleNote(60, _volPercent, _delayInSeconds);
 
-      //Make a note id so we can access it in the stop function
-      var _id = makeNoteId();
-
-      var _delayInSeconds = 0.3333;
-      var _noteLength = 1;
-      noteOscOn(_id, 60, _delayInSeconds);
-
-      setTimeout(() => { noteOscOff(_id); }, (_delayInSeconds + _noteLength) * 1000);
     }
 
 //MIDI.noteOn   (0, note, velocity, delay);
 
 
-    function cueSingleNote(_note, _delay){
-      
+    function cueSingleNote(_note, _velocity, _delay){
+
+      //Make a note id so we can access it in the stop function
+      var _id = rand(0, 9999).toString();
+
+      //Tell Oscillator to Make Note!
+      noteOscOn(_id, 60, _velocity, _delay);
+
+      //Tell Oscillator to Stop + Delete Note!
+      setTimeout(() => { noteOscOff(_id); }, (_delay + noteDurationSeconds) * 1000);
     }
 
-    function noteOscOn(_id, _note, _delay){
+    function noteOscOn(_id, _note, _velocity, _delay){
       console.log("Note On!");
       
       //Initialize Oscillators (weird? each time?)
@@ -170,7 +170,7 @@ $(document).ready(function(){
       oscGain = browserAudioContext.createGain();
 
       //Set unique values based on params
-      oscGain.gain.value = 0.01;
+      oscGain.gain.value = _velocity/10;
       osc.frequency.value = midiToFreq(_note);
       
       osc.gain = oscGain;
