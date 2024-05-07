@@ -74,69 +74,95 @@
      background-color:rgba(255,255,255,1.0); /*<-- somewhat hacky -- */ 
     }
 
-    #slider-container{
-      margin-top:25px;
-      margin-left:10px;
-      width:300px;
-    }
-
     #slider-label{
-      padding-bottom:5px;
+      padding-bottom:15px;
+      padding-top:15px;
     }
 
-    #small-txt{
-      color:#ccc;
+    #slide-container small {
+      color:#999;
     }
+
+    #slide-container {
+      width: 90%;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 15px;
+      border-radius: 5px;
+      background: #777;
+      outline: none;
+    }
+
+ 
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+    }
+
 
   </style>
 
 
 </head>
 <body>
-  <div id='instructions'>
-    <h1>Music Practice Tool v2.0</h1>
-    
-    <div>This is a random note generator. Play along with the pattern on your instrument. Listen and match the phrase before the pattern shifts. Press Spacebar or click Start to begin. Adjust values for difficulty.</div>
-  </div>
+  <div id="container">
+    <div id='instructions'>
+      <h1>Music Practice Tool v2.0</h1>
+      
+      <div>This is a random note generator. Play along with the pattern on your instrument. Listen and match the phrase before the pattern shifts. Press Spacebar or click Start to begin. Adjust values for difficulty.</div>
+    </div>
 
-  <ul id='params'>
-    
-    <li><input type='number'      id='patternSpeedId'        value=1.7 min=0 step=0.05> Pattern Duration (Seconds)</li>
-    <li><input type='number'      id='numNotesPerPatternId'  value=3 min=0 max=10 step=1> Notes Per Pattern </li>
-    
-    <li><input type='number'      id='minSemitonesId' value=1 min=0 max=50 step=1><input type='number' id='maxSemitonesId' value=5 min=0 max=50 step=1> Min / Max Semitones from 1st Note</li>
- 
-    <li><input type='checkbox'    id='avoidDupesCheckBoxId'  class='cgcheckbox' > Avoid Duplicate Successive Notes </li>
-    
-    <li><input type='checkbox'    id='loopCheckBoxId'        class='cgcheckbox' checked> Loop Patterns </li>
-    <li><input type='checkbox'    id='autoAdvanceCheckBoxId' class='cgcheckbox' checked> Auto Advance (Req: Loop)</li>
-    <li><input type='number'      id='numLoopsId'            value=4 min=0 step=1> Loops until Auto Advance (Req: Auto Advance)  </li>
-
-  </ul>
-
-  <div id='loopdots'></div>
-
-  <div id='controls'>
-    <button id='start'>START</button>
-    <button id='stop'>STOP</button>
-    <br />
-    
-  </div>
-
-  <div id="slider-container">
-    <div id="slider-label">Volume</div>
-    <div id="slider"></div>
-  </div>
+    <ul id='params'>
+      
+      <li><input type='number'      id='patternSpeedId'        value=1.7 min=0 step=0.05> Pattern Duration (Seconds)</li>
+      <li><input type='number'      id='numNotesPerPatternId'  value=3 min=0 max=10 step=1> Notes Per Pattern </li>
+      
+      <li><input type='number'      id='minSemitonesId' value=1 min=0 max=50 step=1><input type='number' id='maxSemitonesId' value=5 min=0 max=50 step=1> Min / Max Semitones from 1st Note</li>
   
-  <script src="./index_files/jquery/jquery.js" type="text/javascript"></script>
-  <script src="./index_files/jquery/jquery-ui.min.js" type="text/javascript"></script>
-  <script src="./index_files/source.js" type="text/javascript"></script>
+      <li><input type='checkbox'    id='avoidDupesCheckBoxId'  class='cgcheckbox' > Avoid Duplicate Successive Notes </li>
+      
+      <li><input type='checkbox'    id='loopCheckBoxId'        class='cgcheckbox' checked> Loop Patterns </li>
+      <li><input type='checkbox'    id='autoAdvanceCheckBoxId' class='cgcheckbox' checked> Auto Advance (Req: Loop)</li>
+      <li><input type='number'      id='numLoopsId'            value=4 min=0 step=1> Loops until Auto Advance (Req: Auto Advance)  </li>
 
+    </ul>
 
-<script>
+    <div id='loopdots'></div>
 
-</script>
+    <div id='controls'>
+      <button id='start'>START</button>
+      <button id='stop'>STOP</button>
+      <br />
+      
+    </div>
+    
+    <div id="slide-container">
+      <div id="slider-label">Volume </div>
+      <input type="range" min="0" max="100" value="20" class="slider" id="volumeSliderEl">
+      <small>(on mobile, use device's volume, and unmute your device)</small>
+    </div>
 
+    <script src="./index_files/jquery/jquery.js" type="text/javascript"></script>
+    <script src="./index_files/jquery/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="./index_files/source.js" type="text/javascript"></script>
+
+  </div>
 
 </body>
 </html>

@@ -26,8 +26,19 @@ $(document).ready(function(){
     input_patternSpeedInput   = $('#patternSpeedId');
     input_numLoopsInput       = $('#numLoopsId');
   
-    $("#slider").slider();
-    $( "#slider" ).slider({ value: 20 });
+    // $("#slider").slider();
+    // $( "#slider" ).slider({ value: 20 });
+
+    var slider = document.getElementById("volumeSliderEl");
+    var volumeSliderValue = 20;
+    // output.innerHTML = slider.value;
+    
+    slider.oninput = function() {
+      console.log("Volume Adjusted to ..." + this.value);
+      volumeSliderValue = this.value;
+    }
+
+
     
     var notesPerPattern;
     var minSemitones;
@@ -376,17 +387,13 @@ $(document).ready(function(){
   
     function play(){
       console.log("play!");
-
-      console.log('start audio context...');
+      // console.log('start audio context...');
       if(browserAudioContext == null) browserAudioContext = new AudioContext();
 
       var n; //note
       var d; //delay
-      
-      //var volPercent = $("#slider").slider( "value" )/200;
-      //var vol = 127.0 * volPercent;
 
-      var volPercent = $("#slider").slider( "value" ) / 100;
+      var volPercent = volumeSliderValue / 100;
       
       for (var i=0; i < currentPattern.length; i++) {
         n = currentPattern[i];
