@@ -115,9 +115,7 @@ $(document).ready(function(){
     //====================================================
     //     Audio Context Initialization 
     //====================================================
-    let browserAudioContext;
-    // let osc;
-    // let oscGain;
+    let browserAudioContext = null;
     let oscillators = {};
 
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -128,103 +126,97 @@ $(document).ready(function(){
       const a = 440;
       return (a/32) * (2 ** ((_n-9) / 12));
     }
-  
-    //Start Context Button
-    $('#audioStart').click(audioStartPressed);
-  
-
-    function audioStartPressed(){
-
-      console.log('start audio context...');
-      browserAudioContext = new AudioContext();
-     
-
-    }
-
-//MIDI.noteOn   (0, note, velocity, delay);
-
 
     function cueSingleNote(_note, _velocity, _delay){
 
       //Make a note id so we can access it in the stop function
-      var _id = rand(0, 9999).toString();
+      var _id = rand(0, 999).toString();
 
       //Tell Oscillator to Make Note!
       noteOscOn(_id, _note, _velocity, _delay);
 
       //Tell Oscillator to Stop + Delete Note!
-      setTimeout(() => { noteOscOff(_id); }, (_delay + noteDurationSeconds) * 1000);
+      setTimeout(() => { noteOscOff(_id); }, ((_delay + noteDurationSeconds) * 1000));
+    }
+
+    function stopAllNotes(){
+      console.log("======stopAllNotes=====");
+      if(oscillators == {}) return;
+
+      for (let i in oscillators) {
+        noteOscOff(i);
+      };
+
+      return;
+      if(browserAudioContext){
+        browserAudioContext.close();
+      }else{
+        console.log('catch exception: cant stop notes because no context');
+      }
+
+      if(oscillators.length > 0){
+        oscillators = {};
+      }
+
+      browserAudioContext = null;
+      
     }
 
     function noteOscOn(_id, _note, _velocity, _delay){
-      console.log("Note On!");
-      
+      // console.log("Note On!: vel = " + _velocity);
+      var _vel = _velocity/10;
+      var _startTime = browserAudioContext.currentTime + _delay;
+
       //Initialize Oscillators (weird? each time?)
       let osc = browserAudioContext.createOscillator();
       let oscGain = browserAudioContext.createGain();
 
       //Set unique values based on params
-      oscGain.gain.value = _velocity/10;
       osc.frequency.value = midiToFreq(_note);
-      
-      osc.gainRef = oscGain;//attach gain val to object for noteoff reference
+      oscGain.gain.setValueAtTime(0.0, _startTime);
 
-      //Connect Oscillators to context + gain, execute
-      oscillators[_id] = osc;
-      
+      var _rampTime = 0.02;//fixed ramp time
+      oscGain.gain.linearRampToValueAtTime(_vel, _startTime+_rampTime);
+
+      //Connect Oscillators to context + gain
       osc.connect(oscGain);
       oscGain.connect(browserAudioContext.destination);
 
-      var _startTime = browserAudioContext.currentTime + _delay;
+      //start the note at the startTime (delay)
       osc.start(_startTime);
+
+      //Store references for later access / cleanup
+      osc.gainRef = oscGain;
+      oscillators[_id] = osc;
 
     }
   
     function noteOscOff(_id){
-      let osc = oscillators[_id];
       
+      if(browserAudioContext == null) return;
+      
+      let osc = oscillators[_id];
+
+      //We could have killed the note via StopAllNotes
+      //in that scenario, there may be lingering setTimeouts that try to call a null ref
+      if(osc == undefined) return; 
+
       //ramp down the gain
       var _gainRef = osc.gainRef.gain;
       _gainRef.setValueAtTime(_gainRef.value, browserAudioContext.currentTime);
       var _rampTime = noteDurationSeconds/2;
-      _gainRef.exponentialRampToValueAtTime(0.00001, browserAudioContext.currentTime + _rampTime);
+      _gainRef.exponentialRampToValueAtTime(0.001, browserAudioContext.currentTime + _rampTime);
 
-      //clean up the note
+      //clean up the note's data
       setTimeout(() => {
         osc.stop();
         osc.disconnect();
-      }, (noteDurationSeconds * 1000));
-      delete oscillators[_id];
+        delete oscillators[_id];
+      }, ((_rampTime) * 1000));
+      
     }
   
-    
   
-    //====================================================
-    //     Inialize MIDI plugin
-    //====================================================
-    /*
-    MIDI.loadPlugin({
-      soundfontUrl: "./soundfont/",
-      instrument: "acoustic_grand_piano",
-  
-      onprogress: function(state, progress) {
-        console.log(state, progress);
-      },
-      onsuccess: function() {
-        
-        // var note        = 50;   // the MIDI note value / pitch
-        // var velocity    = 127;  // how hard the note hits
-        // var noteSustain = 0.75; // How long to wait before sending noteOff 
-        // var delay       = 0;    // play one note every quarter second
-  
-        // play the note
-        // MIDI.setVolume(0, 127);
-        // MIDI.noteOn   (0, note, velocity, delay);
-        // MIDI.noteOff  (0, note, delay + noteSustain);
-        
-      }
-    });
-    */
     //====================================================
     //     UI Events
     //====================================================
@@ -263,13 +255,16 @@ $(document).ready(function(){
     //====================================================
     //     Start / Stop
     //====================================================
-  
+
     function startButtonPressed(){
       if (isPlaying) return;
-      console.log(">startButtonPressed<");
-  
+
       //CG: NeedsMidi Version
       //MIDI.stopAllNotes();
+      stopAllNotes();
+
+      console.log(">startButtonPressed<");
+
       isPlaying = true;
   
       pollAllParameters();
@@ -290,6 +285,7 @@ $(document).ready(function(){
   
       //CG: NeedsMidi Version
       //MIDI.stopAllNotes();
+      stopAllNotes();
   
       isPlaying = false;
       loopTimesPlayed = 0;
@@ -380,6 +376,10 @@ $(document).ready(function(){
   
     function play(){
       console.log("play!");
+
+      console.log('start audio context...');
+      if(browserAudioContext == null) browserAudioContext = new AudioContext();
+
       var n; //note
       var d; //delay
       
@@ -408,6 +408,8 @@ $(document).ready(function(){
     function playNewPattern(){
       //CG: NeedsMidi Version
       //MIDI.stopAllNotes();
+      //stopAllNotes();
+
       clearTimeout(loopTimeoutVar);
       
       CreateNewPattern();
@@ -437,6 +439,7 @@ $(document).ready(function(){
   
           //CG: NeedsMidi Version
           //MIDI.stopAllNotes();
+          stopAllNotes();
           playNewPattern();
         } else {
           stopButtonPressed();
