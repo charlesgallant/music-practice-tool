@@ -148,23 +148,23 @@ $(document).ready(function(){
       };
 
       return;
-      if(browserAudioContext){
-        browserAudioContext.close();
-      }else{
-        console.log('catch exception: cant stop notes because no context');
-      }
+      // if(browserAudioContext){
+      //   browserAudioContext.close();
+      // }else{
+      //   console.log('catch exception: cant stop notes because no context');
+      // }
 
-      if(oscillators.length > 0){
-        oscillators = {};
-      }
+      // if(oscillators.length > 0){
+      //   oscillators = {};
+      // }
 
-      browserAudioContext = null;
+      // browserAudioContext = null;
       
     }
 
     function noteOscOn(_id, _note, _velocity, _delay){
       // console.log("Note On!: vel = " + _velocity);
-      var _vel = _velocity/10;
+      var _vel = _velocity/5;
       var _startTime = browserAudioContext.currentTime + _delay;
 
       //Initialize Oscillators (weird? each time?)
