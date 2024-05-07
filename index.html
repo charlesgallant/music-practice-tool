@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <link href="./index_files/jquery/jquery-ui.min.css" rel="stylesheet">
+  <!-- <link href="./index_files/jquery/jquery-ui.min.css" rel="stylesheet"> -->
 
   <style type="text/css">
 
@@ -115,7 +115,6 @@
       cursor: pointer;
     }
 
-
   </style>
 
 
@@ -131,12 +130,9 @@
     <ul id='params'>
       
       <li><input type='number'      id='patternSpeedId'        value=1.7 min=0 step=0.05> Pattern Duration (Seconds)</li>
-      <li><input type='number'      id='numNotesPerPatternId'  value=3 min=0 max=10 step=1> Notes Per Pattern </li>
-      
+      <li><input type='number'      id='numNotesPerPatternId'  value=3 min=0 max=10 step=1> Notes Per Pattern </li>  
       <li><input type='number'      id='minSemitonesId' value=1 min=0 max=50 step=1><input type='number' id='maxSemitonesId' value=5 min=0 max=50 step=1> Min / Max Semitones from 1st Note</li>
-  
-      <li><input type='checkbox'    id='avoidDupesCheckBoxId'  class='cgcheckbox' > Avoid Duplicate Successive Notes </li>
-      
+      <li><input type='checkbox'    id='avoidDupesCheckBoxId'  class='cgcheckbox' > Avoid Duplicate Successive Notes </li> 
       <li><input type='checkbox'    id='loopCheckBoxId'        class='cgcheckbox' checked> Loop Patterns </li>
       <li><input type='checkbox'    id='autoAdvanceCheckBoxId' class='cgcheckbox' checked> Auto Advance (Req: Loop)</li>
       <li><input type='number'      id='numLoopsId'            value=4 min=0 step=1> Loops until Auto Advance (Req: Auto Advance)  </li>
@@ -159,7 +155,6 @@
     </div>
 
     <script src="./index_files/jquery/jquery.js" type="text/javascript"></script>
-    <script src="./index_files/jquery/jquery-ui.min.js" type="text/javascript"></script>
     <script src="./index_files/source.js" type="text/javascript"></script>
 
   </div>

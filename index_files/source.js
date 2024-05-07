@@ -26,19 +26,12 @@ $(document).ready(function(){
     input_patternSpeedInput   = $('#patternSpeedId');
     input_numLoopsInput       = $('#numLoopsId');
   
-    // $("#slider").slider();
-    // $( "#slider" ).slider({ value: 20 });
-
     var slider = document.getElementById("volumeSliderEl");
     var volumeSliderValue = 20;
-    // output.innerHTML = slider.value;
     
     slider.oninput = function() {
-      console.log("Volume Adjusted to ..." + this.value);
       volumeSliderValue = this.value;
     }
-
-
     
     var notesPerPattern;
     var minSemitones;
@@ -151,7 +144,7 @@ $(document).ready(function(){
     }
 
     function stopAllNotes(){
-      console.log("======stopAllNotes=====");
+      console.log("====== stopAllNotes =====");
       if(oscillators == {}) return;
 
       for (let i in oscillators) {
@@ -164,11 +157,9 @@ $(document).ready(function(){
       // }else{
       //   console.log('catch exception: cant stop notes because no context');
       // }
-
       // if(oscillators.length > 0){
       //   oscillators = {};
       // }
-
       // browserAudioContext = null;
       
     }
@@ -243,12 +234,6 @@ $(document).ready(function(){
       pollAllParameters();
   
     });
-  
-  
-    //$('#params input').click(function(event){
-      //$(event.target).blur();
-      //$(this).change();
-    //});
   
     window.onkeyup = function(e) {
       console.log("!! " + e.key);
