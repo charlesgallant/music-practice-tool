@@ -165,7 +165,7 @@ $(document).ready(function(){
 
     function noteOscOn(_id, _note, _velocity, _delay){
       // console.log("Note On!: vel = " + _velocity);
-      var _vel = _velocity/5;
+      var _vel = _velocity/3;
       var _startTime = browserAudioContext.currentTime + _delay;
 
       //Initialize Oscillators (weird? each time?)
