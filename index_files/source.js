@@ -143,7 +143,8 @@ $(document).ready(function(){
       console.log("Note On!");
       osc.frequency.value = '440';
       osc.connect(browserAudioContext.destination);
-      
+      osc.start();
+
     }
   
     function noteOff(_note){
