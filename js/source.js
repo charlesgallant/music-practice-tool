@@ -14,6 +14,13 @@ Next Steps:
  - Think about steps and pauses between notes:
    - Hear a note, pause, try to hit it
 */
+
+
+
+
+
+
+
 $(document).ready(function(){
 
     //Inputs

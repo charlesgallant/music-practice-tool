@@ -8,21 +8,93 @@
     body {
       background-color: #333;
       color: #ccc;
-      font-family: sans-serif;
+      /* font-family: sans-serif; */
+      font-family: Inter, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, sans-serif;
       font-size: 20px;
     }
 
     @media (max-width: 430px) {
       body {
-        font-size: 16px;
+        /* font-size: 16px; */
       }
     }
     #grid-container {
-        background-color: #313;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        height:90vh;
+        align-content:space-around;
     }
-    .control-container {
-        background-color: rgb(103, 18, 103);
-        border:solid 1px red;
+    .control-container {        
+        flex-basis: 150px;
+        align-self: stretch;
+        
+        background-color: #cfcfcf;
+        border: solid 1px #a3a3a3;
+        border-bottom: solid 3px #a3a3a3;
+        padding:10px;
+        border-radius: 4px;
+        box-shadow: 0px 1px 5px 0px rgba(0,0,0,0.75);
+    }
+
+    .control-stack {
+        
+        display: flex;
+        flex-direction:column;
+        align-content:stretch;
+        justify-content: space-between;
+        height:100%;
+    }
+    .control-layer {
+        display: flex;
+        /* border:solid 1px green; */
+        justify-content:center;
+        align-self: stretch;
+    }
+
+    .c-label {
+        font-size:0.8em;
+        color:#323232;
+        font-weight: bold;
+        text-align: center;
+    }
+    .c-value {
+        color:#3c7293;
+        font-size:3em;
+        font-weight: bold;
+    }
+
+    .c-bottom-container {
+        font-weight: bold;
+        justify-content: space-around;
+        
+    }
+    .c-incdec {
+
+        background-color: #3c7293;
+        color:white;
+        font-size:1.5em;
+        align-content: center;
+        border-radius:20px;
+        width:40px;
+        height:40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Courier New', Courier, monospace;
+
+    }
+
+    .check-on, .check-off{
+        font-size:1.9em;
+    }
+    .check-on {
+        color:darkgreen;
+    }
+
+    .check-off {
+        color:darkred;
     }
 
   </style>
@@ -31,18 +103,65 @@
 </head>
 <body>
     <div id="grid-container">
-        <div class="control-container">Control Here</div>
-        <div class="control-container">Control Here</div>
-        <div class="control-container">Control Here</div>
-        <div class="control-container">Control Here</div>
-        <div class="control-container">Control Here</div>
-        <div class="control-container">Control Here</div>
-        <div class="control-container">Control Here</div>
-        <div class="control-container">Control Here</div>
+        <div class="control-container" id="pattern-duration">
+            <div class="control-stack">
+                <div class="control-layer c-label">Pattern Duration</div>
+                <div class="control-layer c-value">#</div>
+                <div class="control-layer c-bottom-container">
+                    <div class="c-incdec c-dec">-</div>
+                    <div class="c-incdec c-inc">+</div>
+                </div>
+            </div>
+        </div>
+        <div class="control-container" id="notes-per-pattern">
+            <div class="control-stack">
+                <div class="control-layer c-label">Notes Per Pattern</div>
+                <div class="control-layer c-value">#</div>
+                <div class="control-layer c-bottom-container">
+                    <div class="c-incdec c-dec">-</div>
+                    <div class="c-incdec c-inc">+</div>
+                </div>
+            </div>
+        </div>
+        <div class="control-container" id="avoid-duplicates">
+            <div class="control-stack">
+                <div class="control-layer c-label">Avoid Duplicates</div>
+                <div class="control-layer c-value">#</div>
+                <div class="control-layer c-bottom-container">
+                </div>
+            </div>
+        </div>
+        <div class="control-container" id="loop-pattern">
+            <div class="control-stack">
+                <div class="control-layer c-label">Loop Pattern</div>
+                <div class="control-layer c-value">#</div>
+                <div class="control-layer c-bottom-container">
+                </div>
+            </div>
+        </div>
+        <div class="control-container" id="auto-advance">
+            <div class="control-stack">
+                <div class="control-layer c-label">Auto-Advance Loop</div>
+                <div class="control-layer c-value">#</div>
+                <div class="control-layer c-bottom-container">
+                </div>
+            </div>
+        </div>
+        <div class="control-container" id="num-loops">
+            <div class="control-stack">
+                <div class="control-layer c-label">Num Loops</div>
+                <div class="control-layer c-value">#</div>
+                <div class="control-layer c-bottom-container">
+                    <div class="c-incdec c-dec">-</div>
+                    <div class="c-incdec c-inc">+</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="container">
 
     </div>
+    <script src="./js/mControl.js" type="text/javascript"></script>
 </body>
 </html>
