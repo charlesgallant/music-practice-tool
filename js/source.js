@@ -28,7 +28,7 @@ $(document).ready(function(){
   input_minSemitonesInput   = $('#minSemitonesId');
   input_maxSemitonesInput   = $('#maxSemitonesId');
   input_loopCheckbox        = $('#loopCheckBoxId');
-  input_avoidDupesCheckbox  = $('#avoidDupesCheckBoxId');
+  input_allowDupesCheckbox  = $('#allowDupesCheckBoxId');
   input_autoAdvanceCheckbox = $('#autoAdvanceCheckBoxId');
   input_patternSpeedInput   = $('#patternSpeedId');
   input_numLoopsInput       = $('#numLoopsId');
@@ -47,7 +47,7 @@ $(document).ready(function(){
   var noteDurationSeconds;
   var loopsUntilAutoAdvance;
   var loopIsChecked;
-  var avoidDupesIsChecked
+  var allowDupesIsChecked
   var autoAdvanceIsChecked;
 
 
@@ -103,7 +103,7 @@ $(document).ready(function(){
     }
 
     loopIsChecked           = input_loopCheckbox.is(':checked');
-    avoidDupesIsChecked     = input_avoidDupesCheckbox.is(':checked');
+    allowDupesIsChecked     = input_allowDupesCheckbox.is(':checked');
     autoAdvanceIsChecked    = input_autoAdvanceCheckbox.is(':checked');
 
   };
@@ -131,7 +131,6 @@ $(document).ready(function(){
   window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
   
-
   function midiToFreq(_n){
     const a = 440;
     return (a/32) * (2 ** ((_n-9) / 12));
@@ -301,7 +300,7 @@ $(document).ready(function(){
   //====================================================
   //     Pattern Creation / Playback / Loop
   //====================================================
-  function CreateNewPattern(){
+  function createNewPattern(){
     newPattern = [];
     
     //Init var to hold new note, and also one for checking for duplicates
@@ -309,7 +308,7 @@ $(document).ready(function(){
     var prevR;
 
     //Create the First Note in the pattern
-    var startingNote = parseInt(rand(68,60));
+    var startingNote = parseInt(rand(70,60));
     r = startingNote; 
     newPattern.push(r);
     
@@ -325,8 +324,10 @@ $(document).ready(function(){
 
     //Consider user inputs for range limits
     var minimumRandomNoteValue = startingNote + (minSemitones * ascDescBool);
-    var maximumRandomNoteValue = startingNote + (maxSemitones * ascDescBool) + (1 * ascDescBool);
-
+    // var maximumRandomNoteValue = startingNote + (maxSemitones * ascDescBool) + (1 * ascDescBool);
+      //^ I don't know why I did this, but I'm removing it.
+    
+    var maximumRandomNoteValue = startingNote + (maxSemitones * ascDescBool);
 
     //Initialize the safeguard (error check)
     var loopRuns = 0;
@@ -335,19 +336,19 @@ $(document).ready(function(){
     for (var i = 1; i < notesPerPattern; i++) {
 
       //Save previous value for checking duplicates
-      if(avoidDupesIsChecked) prevR = r; 
+      if(!allowDupesIsChecked) prevR = r; 
 
       //Generate a new random note!
       r = parseInt(rand(minimumRandomNoteValue, maximumRandomNoteValue));
 
 
       //Check for Duplicates, and re-run loop
-      if(avoidDupesIsChecked && prevR == r){
+      if(!allowDupesIsChecked && prevR == r){
         i--;
         console.log("Found a duplicate; re-running loop");
 
         //Check for failures!
-        loopRuns++; if(loopRuns > 100) { console.log('Error: loop overflow'); return; }
+        loopRuns++; if(loopRuns > 50) { console.log('Error: loop overflow'); return; }
         continue;
       }
 
@@ -373,7 +374,7 @@ $(document).ready(function(){
   }
 
   function play(){
-    console.log("play!");
+    //console.log("play!");
     // console.log('start audio context...');
     if(browserAudioContext == null) browserAudioContext = new AudioContext();
 
@@ -399,7 +400,7 @@ $(document).ready(function(){
   function playNewPattern(){
     //stopAllNotes(); Removing this from here; Not Necessary
     clearTimeout(loopTimeoutVar);
-    CreateNewPattern();
+    createNewPattern();
     play();
   }
 

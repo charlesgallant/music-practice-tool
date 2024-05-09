@@ -103,6 +103,7 @@ class mControl {
 
 //=================================================================
 // Actual Inputs, tied to DOM IDs...
+//mControl(_containerEl, _type, _defaultValue, _numericStepValue=null, _minVal=0, _maxVal=null)
 //=================================================================
 //Pattern Duration
 const patternDurationControl = new mControl(
@@ -119,10 +120,10 @@ const notesPerPatternControl = new mControl(
   1, 64
 )
 
-//Avoid Duplicates (check)
-const AvoidDuplicatesControl = new mControl(
-  document.querySelector("#avoid-duplicates"),
-  "checkbox", 0, null,
+//Allow Duplicates (check)
+const AllowDuplicatesControl = new mControl(
+  document.querySelector("#allow-duplicates"),
+  "checkbox", 1, null,
   null, null
 )
 
