@@ -148,6 +148,20 @@ const NumLoopsControl = new mControl(
   1, 100
 )
 
+//Range Min
+const RangeMinControl = new mControl(
+  document.querySelector("#range-min"),
+  "number", 1, 1,
+  1, 100
+)
+
+//Range Max
+const RangeMaxControl = new mControl(
+  document.querySelector("#range-max"),
+  "number", 7, 1,
+  1, 100
+)
+
 
 
 

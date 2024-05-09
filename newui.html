@@ -38,10 +38,11 @@
       border-radius: 4px;
       box-shadow: 0px 1px 5px 0px rgba(0,0,0,0.75);
       background-image: linear-gradient(#fff, #ccc);
+
+      margin-top:5px;
     }
 
-    .control-stack {
-        
+    .control-stack {  
       display: flex;
       flex-direction:column;
       align-content:stretch;
@@ -151,7 +152,27 @@
     </div>
     <div class="control-container" id="num-loops">
       <div class="control-stack">
-        <div class="control-layer c-label">Num Loops</div>
+        <div class="control-layer c-label">Loops until Auto-Advance</div>
+        <div class="control-layer c-value">#</div>
+        <div class="control-layer c-bottom-container">
+          <div class="c-incdec c-dec">-</div>
+          <div class="c-incdec c-inc">+</div>
+        </div>
+      </div>
+    </div>
+    <div class="control-container" id="range-min">
+      <div class="control-stack">
+        <div class="control-layer c-label">Min Random Range (Semitones, from 1st note)</div>
+        <div class="control-layer c-value">#</div>
+        <div class="control-layer c-bottom-container">
+          <div class="c-incdec c-dec">-</div>
+          <div class="c-incdec c-inc">+</div>
+        </div>
+      </div>
+    </div>
+    <div class="control-container" id="range-max">
+      <div class="control-stack">
+        <div class="control-layer c-label">Max Random Range (Semitones, from 1st note)</div>
         <div class="control-layer c-value">#</div>
         <div class="control-layer c-bottom-container">
           <div class="c-incdec c-dec">-</div>
