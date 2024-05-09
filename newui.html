@@ -42,6 +42,18 @@
       margin-top:5px;
     }
 
+    .double-control {
+      flex-basis: 325px;
+      display: flex;
+      flex-direction: row;
+    }
+    .control-divider{
+      background: #bfbfbf;
+      width: 2px;
+      margin-left: 8px;
+      margin-right: 8px;
+    }
+
     .control-stack {  
       display: flex;
       flex-direction:column;
@@ -62,10 +74,18 @@
       font-weight: bold;
       text-align: center;
     }
+
+    .c-label-sub {
+      font-size:0.6em;
+      color:#a1a1a1;
+      font-weight: bold;
+      text-align: center;
+    }
     .c-value {
       color:#3c7293;
       font-size:3em;
       font-weight: bold;
+      margin-top: -0.15em;
     }
 
     .c-bottom-container {
@@ -75,17 +95,20 @@
     }
     .c-incdec {
 
-      background-color: #3c7293;
-      color:white;
-      font-size:1.5em;
-      align-content: center;
-      border-radius:20px;
-      width:40px;
-      height:40px;
+      background-color: #ffffff;
+      color: #727d97;
+      font-size: 1.5em;
+      /* align-content: center; */
+      border-radius: 12px;
+      width: 60px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'Courier New', Courier, monospace;
+
+      box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.75);
+      background-image: linear-gradient(#fff, #ccc);
 
     }
 
@@ -144,7 +167,7 @@
     </div>
     <div class="control-container" id="auto-advance">
       <div class="control-stack">
-        <div class="control-layer c-label">Auto-Advance Loop</div>
+        <div class="control-layer c-label">Forever Mode</div>
         <div class="control-layer c-value">#</div>
         <div class="control-layer c-bottom-container">
         </div>
@@ -160,19 +183,20 @@
         </div>
       </div>
     </div>
-    <div class="control-container" id="range-min">
-      <div class="control-stack">
-        <div class="control-layer c-label">Min Random Range (Semitones, from 1st note)</div>
+    <div class="control-container double-control" id="range-minmax">
+      <div class="control-stack" id="range-min">
+        <div class="control-layer c-label">Min Random Range</div>
+        <div class="control-layer c-label-sub">Half steps from 1st note</div>
         <div class="control-layer c-value">#</div>
         <div class="control-layer c-bottom-container">
           <div class="c-incdec c-dec">-</div>
           <div class="c-incdec c-inc">+</div>
         </div>
       </div>
-    </div>
-    <div class="control-container" id="range-max">
-      <div class="control-stack">
-        <div class="control-layer c-label">Max Random Range (Semitones, from 1st note)</div>
+      <div class="control-divider"></div>
+      <div class="control-stack" id="range-max">
+        <div class="control-layer c-label">Max Random Range</div>
+        <div class="control-layer c-label-sub">Half steps from 1st note</div>
         <div class="control-layer c-value">#</div>
         <div class="control-layer c-bottom-container">
           <div class="c-incdec c-dec">-</div>
