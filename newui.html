@@ -12,6 +12,7 @@
       /* font-family: sans-serif; */
       font-family: Inter, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, sans-serif;
       font-size: 20px;
+      margin: 0 auto;
     }
 
     @media (max-width: 430px) {
@@ -24,8 +25,9 @@
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: space-evenly;
-      height:90vh;
-      align-content:space-around;
+      height:100dvh;
+      align-content:flex-start;
+      background-color:#727d97;
     }
     .control-container {        
       flex-basis: 150px;
@@ -175,7 +177,8 @@
     </div>
     <div class="control-container" id="num-loops">
       <div class="control-stack">
-        <div class="control-layer c-label">Loops until Auto-Advance</div>
+        <div class="control-layer c-label">Number of Loops</div>
+        <div class="control-layer c-label-sub">Req: Loop Pattern</div>
         <div class="control-layer c-value">#</div>
         <div class="control-layer c-bottom-container">
           <div class="c-incdec c-dec">-</div>
