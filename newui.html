@@ -7,12 +7,13 @@
 
     body {
       user-select: none;
-      background-color: #333;
+      /* background-color: #333; */
       color: #ccc;
       /* font-family: sans-serif; */
       font-family: Inter, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, sans-serif;
       font-size: 20px;
       margin: 0 auto;
+      background-color:#777777;
     }
 
     @media (max-width: 430px) {
@@ -20,14 +21,36 @@
         /* font-size: 16px; */
       }
     }
+    #header-container{
+      margin-left: 10px;
+      margin-right: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #header-container h1{
+      font-size: 1.15em;
+      margin-bottom: 5px;
+      margin-top: 5px;
+      text-align: center;
+    }
+    #header-container small {
+      display: inline-block;
+      font-size:5px;
+      line-height: 5px;
+      margin-bottom: 5px;
+
+      display: none;
+    }
     #grid-container {
+      /* height:120dvh; */
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: space-evenly;
-      height:100dvh;
       align-content:flex-start;
-      background-color:#727d97;
+
+      padding-bottom:100px;
     }
     .control-container {        
       flex-basis: 150px;
@@ -95,7 +118,7 @@
       justify-content: space-around;
         
     }
-    .c-incdec {
+    .c-button {
 
       background-color: #ffffff;
       color: #727d97;
@@ -125,19 +148,89 @@
       color:darkred;
     }
 
+    #footer-container {
+      height: 80px;
+      /* background-color: darkred; */
+      position: fixed;
+      bottom: 0;
+      width: 100dvw;
+      box-shadow: 0px -4px 10px 0px rgb(0 0 0 / 58%);
+      background-image: linear-gradient(#fff, #ccc);
+
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .playstop {
+      flex-basis: 100px;
+      height: 55px;
+      font-weight: bold;
+      margin-left:15px;
+    }
+
+    #slide-container {
+      /* width: 90%; */
+      flex-grow: 1;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 15px;
+      border-radius: 5px;
+      background: #777;
+      outline: none;
+    }
+
+ 
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+      box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.75);
+      background-image: linear-gradient(#fff, #ccc);
+    }
+
+    .slider::-moz-range-thumb {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+      box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.75);
+      background-image: linear-gradient(#fff, #ccc);
+    }
+    #vol-icon {
+      margin-right:10px;
+    }
   </style>
 
 
 </head>
 <body>
+  <div id="header-container">
+    <h1>Random Note Ear Trainer</h1>
+    <svg id="i-icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 24 24">
+      <path d="M12,2C6.477,2,2,6.477,2,12s4.477,10,10,10s10-4.477,10-10S17.523,2,12,2z M13,17h-2v-6h2V17z M13,9h-2V7h2V9z"></path>
+    </svg>
+    <small>This is a looping random note generator. Play along with the pattern on your instrument. Listen and match the phrase before the pattern shifts. Adjust values for difficulty.</small>
+  </div>
   <div id="grid-container">
     <div class="control-container" id="pattern-duration">
       <div class="control-stack">
         <div class="control-layer c-label">Pattern Duration</div>
         <div class="control-layer c-value">#</div>
         <div class="control-layer c-bottom-container">
-          <div class="c-incdec c-dec">-</div>
-          <div class="c-incdec c-inc">+</div>
+          <div class="c-button c-dec">-</div>
+          <div class="c-button c-inc">+</div>
         </div>
       </div>
     </div>
@@ -146,8 +239,8 @@
         <div class="control-layer c-label">Notes Per Pattern</div>
         <div class="control-layer c-value">#</div>
         <div class="control-layer c-bottom-container">
-          <div class="c-incdec c-dec">-</div>
-          <div class="c-incdec c-inc">+</div>
+          <div class="c-button c-dec">-</div>
+          <div class="c-button c-inc">+</div>
         </div>
       </div>
     </div>
@@ -181,8 +274,8 @@
         <div class="control-layer c-label-sub">Req: Loop Pattern</div>
         <div class="control-layer c-value">#</div>
         <div class="control-layer c-bottom-container">
-          <div class="c-incdec c-dec">-</div>
-          <div class="c-incdec c-inc">+</div>
+          <div class="c-button c-dec">-</div>
+          <div class="c-button c-inc">+</div>
         </div>
       </div>
     </div>
@@ -192,8 +285,8 @@
         <div class="control-layer c-label-sub">Half steps from 1st note</div>
         <div class="control-layer c-value">#</div>
         <div class="control-layer c-bottom-container">
-          <div class="c-incdec c-dec">-</div>
-          <div class="c-incdec c-inc">+</div>
+          <div class="c-button c-dec">-</div>
+          <div class="c-button c-inc">+</div>
         </div>
       </div>
       <div class="control-divider"></div>
@@ -202,15 +295,19 @@
         <div class="control-layer c-label-sub">Half steps from 1st note</div>
         <div class="control-layer c-value">#</div>
         <div class="control-layer c-bottom-container">
-          <div class="c-incdec c-dec">-</div>
-          <div class="c-incdec c-inc">+</div>
+          <div class="c-button c-dec">-</div>
+          <div class="c-button c-inc">+</div>
         </div>
       </div>
     </div>
   </div>
-
-  <div id="container">
-
+  <div id="footer-container">
+    <div class="c-button playstop">&#9658;</div>
+    <!-- <div class="c-button playstop">&#9724;</div> -->
+    <div id="slide-container">
+      <input type="range" min="0" max="100" value="20" class="slider" id="volumeSliderEl">
+    </div>
+    <div id="vol-icon">&#128266;</div>
   </div>
   <script src="./js/mControl.js" type="text/javascript"></script>
 </body>
