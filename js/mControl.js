@@ -12,7 +12,7 @@ function roundTo(n, digits) {
 
 
 class mControl {
-  constructor(_containerEl, _type, _defaultValue, _numericStepValue, _minVal=0, _maxVal=null) {
+  constructor(_containerEl, _type, _defaultValue, _numericStepValue=null, _minVal=0, _maxVal=null) {
     this.containerEl = _containerEl;
     this.valueEl = _containerEl.querySelector(".c-value");
     this.incEl = null;
@@ -31,37 +31,25 @@ class mControl {
     //Init Event Listeners
     if(this.type == "checkbox"){
       this.containerEl['objRef'] = this;  
-      this.containerEl.onclick = this.checkboxClicked;
+      // Messy syntax to preserve reference to "this" (this class instead of this el)
+      this.containerEl.onclick = function(){ this["objRef"].toggleCheckbox(); };
 
     }else if(this.type == "number"){
+      
       this.incEl = _containerEl.querySelector(".c-inc");
       this.incEl['objRef'] = this;
-      this.incEl.onclick = this.incClicked;
+      // Messy syntax to preserve reference to "this" (this class instead of this el)
+      this.incEl.onclick = function(){ this["objRef"].incrementNumberValue(); };
+      
       this.decEl = _containerEl.querySelector(".c-dec");
-      this.decEl['objRef'] = this;      
-      this.decEl.onclick = this.decClicked;
+      this.decEl['objRef'] = this;
+      // Messy syntax to preserve reference to "this" (this class instead of this el)
+      this.decEl.onclick = function(){ this["objRef"].decrementNumberValue(); };;
 
     }else{
       //error: Tried to initialize input with invalid type
     }
 
-  }
-
-  //Click Handlers - wrappers to make clicked methods nicer
-  //========================================================
-  checkboxClicked(e){
-    var thisRef = this["objRef"];
-    thisRef.toggleCheckbox();
-  }
-
-  incClicked(e){
-    var thisRef = this["objRef"];
-    thisRef.incrementNumberValue();
-  }
-
-  decClicked(e){
-    var thisRef = this["objRef"];
-    thisRef.decrementNumberValue();
   }
 
   //Checkboxes
@@ -82,7 +70,6 @@ class mControl {
   }
 
   toggleCheckbox(){
-    console.log(this);
 
     if(this.value == 1 ){
       this.setCheckboxValue(0);
@@ -108,6 +95,9 @@ class mControl {
     this.valueEl.textContent = this.value;
   }
 
+  broadcastUpdate(){
+    this.dispatchEvent ;
+  }
 
 }
 
@@ -126,7 +116,7 @@ const patternDurationControl = new mControl(
 const notesPerPatternControl = new mControl(
   document.querySelector("#notes-per-pattern"),
   "number", 3, 1,
-  1, 10
+  1, 64
 )
 
 //Avoid Duplicates (check)
