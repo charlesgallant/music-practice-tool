@@ -1,25 +1,5 @@
-/*
-Next Steps:
-
- - Adjust number of notes
- - Look into creating more options for randomness:
-   - 1s 3s 5s only, where 1 is random
-   - 1s 3s 5s only, locked into 1 scale 
-      - 1s 3s 5s only, locked into 1 scale, always starts with 1
-   - Checkboxes for intervals of that note (all 12)
-   - ascending/descending only
-   - large/small gaps between notes
-
-
- - Think about steps and pauses between notes:
-   - Hear a note, pause, try to hit it
-*/
-
-
-
-
 //=================================================================
-// Actual Inputs, tied to DOM IDs...
+//Init mControl Instances, Tie to DOM
 //mControl(_containerEl, _type, _defaultValue, _numericStepValue=null, _minVal=0, _maxVal=null)
 //=================================================================
 //Pattern Duration
@@ -62,22 +42,13 @@ const RangeMaxControl = new mControl(
   document.querySelector("#range-max"), "number", 7, 1, 1, 100
 )
 
+const slider = document.getElementById("volumeSliderEl");
+var volumeSliderValue = 20;
 
 
 $(document).ready(function(){
 
   //Inputs
-  // input_numNotesInput       = $('#numNotesPerPatternId');
-  // input_minSemitonesInput   = $('#minSemitonesId');
-  // input_maxSemitonesInput   = $('#maxSemitonesId');
-  // input_loopCheckbox        = $('#loopCheckBoxId');
-  // input_allowDupesCheckbox  = $('#allowDupesCheckBoxId');
-  // input_autoAdvanceCheckbox = $('#autoAdvanceCheckBoxId');
-  // input_patternSpeedInput   = $('#patternSpeedId');
-  // input_numLoopsInput       = $('#numLoopsId');
-
-  var slider = document.getElementById("volumeSliderEl");
-  var volumeSliderValue = 20;
   
   slider.oninput = function() {
     volumeSliderValue = this.value;
@@ -92,15 +63,6 @@ $(document).ready(function(){
   var loopIsChecked;
   var allowDupesIsChecked
   var autoAdvanceIsChecked;
-
-  // PatternDurationControl
-  // NotesPerPatternControl
-  // AllowDuplicatesControl
-  // LoopPatternsControl
-  // AutoAdvanceLoopControl
-  // NumLoopsControl
-  // RangeMinControl
-  // RangeMaxControl
   
   function pollAllParameters(){
     //console.log("pollAllParameters");
@@ -109,8 +71,7 @@ $(document).ready(function(){
     minSemitones = RangeMinControl.value;
     maxSemitones = RangeMaxControl.value;
     patternDurationSeconds = PatternDurationControl.value;
-    // Note Duration (no user input) =========================================
-    noteDurationSeconds     = patternDurationSeconds/notesPerPattern;
+    noteDurationSeconds     = patternDurationSeconds/notesPerPattern; //(no user input)
     loopsUntilAutoAdvance   = NumLoopsControl.value;
     loopIsChecked           = LoopPatternsControl.getBoolValue();
     allowDupesIsChecked     = AllowDuplicatesControl.getBoolValue();
@@ -476,15 +437,21 @@ $(document).ready(function(){
     removeAllLoopDots();
 
     for (var i = 0; i < numDots; i++) {
-      addLoopDot(i);
+      addLoopDot(i, numDots);
     }
 
   }
 
-  function addLoopDot(newId){
+  function addLoopDot(newId, _totalDots){
     var newDiv = $("<div>");
     $("#loopdots").append( newDiv );
     newDiv.addClass( "loopdot" ).prop('id', 'ld_'+newId);
+
+    var dotWidthInDvw = 100/_totalDots;
+    var str = dotWidthInDvw + "dvw";
+    console.log("dot width is..." + str);
+    newDiv.css({"width":str});
+
     if(newId == 0) newDiv.addClass('firstdot');
   }
   

@@ -1,5 +1,11 @@
 
+Features:
+Make header tappable to reveal instructions
+Change the play button on play
+Change the body bgcolor on play
+Make sound better
 
+bugs:
 First pattern sometimes plays strangely
 Unchecking loop patterns causes abrupt stop that cuts off final note
 
