@@ -198,13 +198,9 @@ $(document).ready(function(){
   //     UI Events
   //====================================================
   
-  const startButton = document.querySelector("#playstop")
+  const playstop = document.querySelector("#playstop")
 
-  startButton.onclick = startButtonPressed;
-  // TEMP DISABLE; Remake These $('#start').click(startButtonPressed);
-  // TEMP DISABLE; Remake These $('#stop').click(stopButtonPressed);
-  // TEMP DISABLE; Remake These $('#stop').addClass('disabled');
-
+  playstop.onclick = playstopPressed;
 
   PatternDurationControl.bindUpdateCallback(mControlUpdated);
   NotesPerPatternControl.bindUpdateCallback(mControlUpdated);
@@ -215,26 +211,17 @@ $(document).ready(function(){
   RangeMinControl.bindUpdateCallback(mControlUpdated);
   RangeMaxControl.bindUpdateCallback(mControlUpdated);
   
-  
   function mControlUpdated(){
     stopButtonPressed();
     pollAllParameters();
   }
-  
-// handled elsewhere now; deprecated
-  // $('#params input').change(function(event){
-  //   $(event.target).blur();
-  //   stopButtonPressed();
-  //   pollAllParameters();
-
-  // });
 
   window.onkeyup = function(e) {
     console.log("!! " + e.key);
     if(ignoreInput) return;
     if(e.key === " ") {
       if( isPlaying == false ) {
-        startButtonPressed();
+        playstopPressed();
       }else{
         stopButtonPressed();
       }
@@ -246,12 +233,12 @@ $(document).ready(function(){
   //     Start / Stop
   //====================================================
 
-  function startButtonPressed(){
+  function playstopPressed(){
     if (isPlaying) {
       stopButtonPressed();
       return;
     }
-    console.log(">startButtonPressed<");
+    console.log(">playstopPressed<");
 
     stopAllNotes();
 
@@ -259,14 +246,9 @@ $(document).ready(function(){
 
     pollAllParameters();
     playNewPattern();
-    //Unused? clearTimeout(inputTimeoutVar);
 
     //Aesthetic things
-    // $("body").addClass('playing');
-    // $('#start').addClass('disabled');
-    // $('#start').text("RUNNING...");
-    // $('#stop').removeClass('disabled');
-
+    playstop.textContent = "\u23F9";
     drawAllLoopDots();
   
   }
@@ -280,10 +262,8 @@ $(document).ready(function(){
     loopTimesPlayed = 0;
 
     //Aesthetic things
-    // $("body").removeClass('playing');
-    // $('#start').removeClass('disabled');
-    // $('#start').text("PLAY");
-    // $('#stop').addClass('disabled');
+
+    playstop.textContent = "\u25BA";
     removeAllLoopDots();
 
   }
@@ -467,8 +447,6 @@ $(document).ready(function(){
     $('.loopdot').removeClass('highlighted');
   }
   
-
-
 
 });
   
