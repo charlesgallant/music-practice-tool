@@ -429,7 +429,7 @@ $(document).ready(function(){
 
     var dotWidthInDvw = 100/_totalDots;
     var str = dotWidthInDvw + "dvw";
-    console.log("dot width is..." + str);
+    // console.log("dot width is..." + str);
     newDiv.css({"width":str});
 
     if(newId == 0) newDiv.addClass('firstdot');
