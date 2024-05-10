@@ -1,5 +1,7 @@
+//==============================================
+//mControl Class
+//==============================================
 
-console.log("hello from mControl");
 
 //Math Helper Function
 function roundTo(n, digits) {
@@ -10,7 +12,7 @@ function roundTo(n, digits) {
   return +(test.toFixed(digits));
 }
 
-
+//==============================================
 class mControl {
   constructor(_containerEl, _type, _defaultValue, _numericStepValue=null, _minVal=0, _maxVal=null) {
     this.containerEl = _containerEl;
@@ -23,6 +25,8 @@ class mControl {
     this.value = _defaultValue;
     this.minValue = _minVal;
     this.maxValue = _maxVal;
+
+    this.appUpdateFunction = null;
 
     //Set Default Values
     this.valueEl.textContent = _defaultValue;
@@ -44,7 +48,7 @@ class mControl {
       this.decEl = _containerEl.querySelector(".c-dec");
       this.decEl['objRef'] = this;
       // Messy syntax to preserve reference to "this" (this class instead of this el)
-      this.decEl.onclick = function(){ this["objRef"].decrementNumberValue(); };;
+      this.decEl.onclick = function(){ this["objRef"].decrementNumberValue(); };
 
     }else{
       //error: Tried to initialize input with invalid type
@@ -76,92 +80,42 @@ class mControl {
     }else{
       this.setCheckboxValue(1);
     }
+    this.valueUpdated();
+  }
+
+  getBoolValue(){
+    if(this.type != "checkbox") return;
+    return Boolean(this.value)
   }
 
   //Numeric inputs
   incrementNumberValue(){
-
     var curVal = this.value;
-
     this.value = roundTo((curVal + this.numericStepValue), 2);
     if(this.value > this.maxValue) this.value = this.maxValue;
     this.valueEl.textContent = this.value;
-  }
-  decrementNumberValue(){
 
+    this.valueUpdated();
+  }
+
+  decrementNumberValue(){
     var curVal = this.value;
     this.value = roundTo((curVal - this.numericStepValue), 2);
     if(this.value < this.minValue) this.value = this.minValue;
     this.valueEl.textContent = this.value;
+  
+    this.valueUpdated();
   }
 
-  broadcastUpdate(){
-    this.dispatchEvent ;
+  bindUpdateCallback(_func){
+    this.appUpdateFunction = _func;
+  }
+
+  valueUpdated(){
+    if(this.appUpdateFunction != null) this.appUpdateFunction.call();
   }
 
 }
-
-//=================================================================
-// Actual Inputs, tied to DOM IDs...
-//mControl(_containerEl, _type, _defaultValue, _numericStepValue=null, _minVal=0, _maxVal=null)
-//=================================================================
-//Pattern Duration
-const patternDurationControl = new mControl(
-  document.querySelector("#pattern-duration"),
-  "number", 1.7, 0.05,
-  0.5, 30
-);
-
-
-//Notes Per Pattern
-const notesPerPatternControl = new mControl(
-  document.querySelector("#notes-per-pattern"),
-  "number", 3, 1,
-  1, 64
-)
-
-//Allow Duplicates (check)
-const AllowDuplicatesControl = new mControl(
-  document.querySelector("#allow-duplicates"),
-  "checkbox", 1, null,
-  null, null
-)
-
-//Loop Patterns (Check)
-const LoopPatternsControl = new mControl(
-  document.querySelector("#loop-pattern"),
-  "checkbox", 1, null,
-  null, null
-)
-
-//Auto Advance
-const AutoAdvanceLoopControl = new mControl(
-  document.querySelector("#auto-advance"),
-  "checkbox", 1, null,
-  null, null
-)
-
-//Number of Loops
-const NumLoopsControl = new mControl(
-  document.querySelector("#num-loops"),
-  "number", 4, 1,
-  1, 100
-)
-
-//Range Min
-const RangeMinControl = new mControl(
-  document.querySelector("#range-min"),
-  "number", 1, 1,
-  1, 100
-)
-
-//Range Max
-const RangeMaxControl = new mControl(
-  document.querySelector("#range-max"),
-  "number", 7, 1,
-  1, 100
-)
-
 
 
 

@@ -4,7 +4,3 @@ First pattern sometimes plays strangely
 Unchecking loop patterns causes abrupt stop that cuts off final note
 
 
-Auto-Advance Loop (on by default, current language)
-Play Continuously (on by default)
-Keep Generating Patterns (on by default)
-One Shot Mode (off by default)
