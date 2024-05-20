@@ -34,14 +34,7 @@
       margin-top: 5px;
       text-align: center;
     }
-    #header-container small {
-      display: inline-block;
-      font-size:5px;
-      line-height: 5px;
-      margin-bottom: 5px;
 
-      display: none;
-    }
     #grid-container {
       /* height:120dvh; */
       display: flex;
@@ -230,14 +223,28 @@
       height:4px;
       background-color:rgba(255,255,255,1);
       border:solid 1px #003366;
-      /* border-radius: 3px; */
 
     }
+
     .highlighted{
       background-color: rgb(0, 51, 102, 0.75);
     }
     .firstdot{
       background-color: rgb(0, 51, 102, 0.75);
+    }
+
+    #collapse-link{
+      text-align: center;
+      color: #FFF;
+      text-decoration: underline;
+    }
+
+    #instructions{
+      display: none;
+      margin-bottom: 5px;
+      background-color: #333;
+      padding: 10px;
+      box-shadow: inset 0px 1px 22px 0px rgba(0, 0, 0, 0.75);
     }
 
   </style>
@@ -250,8 +257,13 @@
     <svg id="i-icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 24 24">
       <path d="M12,2C6.477,2,2,6.477,2,12s4.477,10,10,10s10-4.477,10-10S17.523,2,12,2z M13,17h-2v-6h2V17z M13,9h-2V7h2V9z"></path>
     </svg>
-    <small>This is a looping random note generator. Play along with the pattern on your instrument. Listen and match the phrase before the pattern shifts. Adjust values for difficulty.</small>
   </div>
+  <section id="instructions">
+    <p>This is a looping random note generator, designed to facilitate a number of different musical exercises. As a warning, it's not designed to sound pleasing! There are many ways to use and configure this tool, but the use case I built this for is as follows:</p>
+    <p>With your instrument in hand, listen to the random patterns, and try to match the notes before the pattern advances. Adjust values for difficulty.</p>
+    <p>The goal is to connect what you hear to what your hands can replicate. By generating interavls at random, this tool attempts to expose the listener to unusual relationships between notes, break free of any habits or "licks" that might limit creativity, and ensure hand muscles are diversely exercised.</p>
+    <p id="collapse-link">Hide info</p>
+  </section>
   <div id="grid-container">
     <div class="control-container" id="pattern-duration">
       <div class="control-stack">

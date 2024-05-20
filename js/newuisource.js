@@ -447,7 +447,36 @@ $(document).ready(function(){
   function removeAllLoopDotsHighlights(){
     $('.loopdot').removeClass('highlighted');
   }
+
   
+
+//Instructions
+
+var instructionsVisible = false;
+
+const iiconEl = $("#i-icon");
+const hideLinkEl = $("#collapse-link");
+const instructionsEl = $("#instructions");
+
+iiconEl.click(function(){
+  toggleInstructions();
+});
+
+hideLinkEl.click(function(){
+  toggleInstructions();
+});
+
+
+function toggleInstructions(){
+  if(instructionsVisible){
+    instructionsEl.slideUp();
+    instructionsVisible = false;
+  }else{
+    instructionsEl.slideDown();
+    instructionsVisible = true;
+  }
+
+}
 
 });
   
