@@ -1,9 +1,16 @@
 
 Features:
 Make header tappable to reveal instructions
-Change the play button on play
+Change the play button on play, make better stop button
 Change the body bgcolor on play
-Make sound better
+Disable buttons that require other buttons
+
+Big Features:
+When looping is disabled, hitting play again will play *that same pattern* again. It currently advances it.
+Make a thing that lets you see the letters of each note played?
+
+
+
 
 bugs:
 First pattern sometimes plays strangely
