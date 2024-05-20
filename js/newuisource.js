@@ -450,33 +450,33 @@ $(document).ready(function(){
 
   
 
-//Instructions
+  //Instructions
 
-var instructionsVisible = false;
+  var instructionsVisible = false;
 
-const iiconEl = $("#i-icon");
-const hideLinkEl = $("#collapse-link");
-const instructionsEl = $("#instructions");
+  const iiconEl = $("#i-icon");
+  const hideLinkEl = $("#collapse-link");
+  const instructionsEl = $("#instructions");
 
-iiconEl.click(function(){
-  toggleInstructions();
-});
+  iiconEl.click(function(){
+    toggleInstructions();
+  });
 
-hideLinkEl.click(function(){
-  toggleInstructions();
-});
+  hideLinkEl.click(function(){
+    toggleInstructions();
+  });
 
 
-function toggleInstructions(){
-  if(instructionsVisible){
-    instructionsEl.slideUp();
-    instructionsVisible = false;
-  }else{
-    instructionsEl.slideDown();
-    instructionsVisible = true;
+  function toggleInstructions(){
+    if(instructionsVisible){
+      instructionsEl.slideUp();
+      instructionsVisible = false;
+    }else{
+      instructionsEl.slideDown();
+      instructionsVisible = true;
+    }
+
   }
-
-}
 
 });
   
