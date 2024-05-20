@@ -1,40 +1,54 @@
-/*
-Next Steps:
+//=================================================================
+//Init mControl Instances, Tie to DOM
+//mControl(_containerEl, _type, _defaultValue, _numericStepValue=null, _minVal=0, _maxVal=null)
+//=================================================================
+//Pattern Duration
+const PatternDurationControl = new mControl(
+  document.querySelector("#pattern-duration"), "number", 1.7, 0.05, 0.5, 30
+);
 
- - Adjust number of notes
- - Look into creating more options for randomness:
-   - 1s 3s 5s only, where 1 is random
-   - 1s 3s 5s only, locked into 1 scale 
-      - 1s 3s 5s only, locked into 1 scale, always starts with 1
-   - Checkboxes for intervals of that note (all 12)
-   - ascending/descending only
-   - large/small gaps between notes
+//Notes Per Pattern
+const NotesPerPatternControl = new mControl(
+  document.querySelector("#notes-per-pattern"), "number", 3, 1, 1, 64
+)
 
+//Allow Duplicates (check)
+const AllowDuplicatesControl = new mControl(
+  document.querySelector("#allow-duplicates"), "checkbox", 1
+)
 
- - Think about steps and pauses between notes:
-   - Hear a note, pause, try to hit it
-*/
+//Loop Patterns (check)
+const LoopPatternsControl = new mControl(
+  document.querySelector("#loop-pattern"), "checkbox", 1
+)
 
+//Auto Advance // Forever Mode (check)
+const AutoAdvanceLoopControl = new mControl(
+  document.querySelector("#auto-advance"), "checkbox", 1
+)
 
+//Number of Loops
+const NumLoopsControl = new mControl(
+  document.querySelector("#num-loops"), "number", 4, 1, 1, 100
+)
 
+//Range Min
+const RangeMinControl = new mControl(
+  document.querySelector("#range-min"), "number", 1, 1, 1, 100
+)
 
+//Range Max
+const RangeMaxControl = new mControl(
+  document.querySelector("#range-max"), "number", 7, 1, 1, 100
+)
 
+const slider = document.getElementById("volumeSliderEl");
+var volumeSliderValue = 20;
 
 
 $(document).ready(function(){
 
   //Inputs
-  input_numNotesInput       = $('#numNotesPerPatternId');
-  input_minSemitonesInput   = $('#minSemitonesId');
-  input_maxSemitonesInput   = $('#maxSemitonesId');
-  input_loopCheckbox        = $('#loopCheckBoxId');
-  input_allowDupesCheckbox  = $('#allowDupesCheckBoxId');
-  input_autoAdvanceCheckbox = $('#autoAdvanceCheckBoxId');
-  input_patternSpeedInput   = $('#patternSpeedId');
-  input_numLoopsInput       = $('#numLoopsId');
-
-  var slider = document.getElementById("volumeSliderEl");
-  var volumeSliderValue = 20;
   
   slider.oninput = function() {
     volumeSliderValue = this.value;
@@ -43,68 +57,25 @@ $(document).ready(function(){
   var notesPerPattern;
   var minSemitones;
   var maxSemitones;
-  var loopStepDurationSeconds;
+  var patternDurationSeconds;
   var noteDurationSeconds;
   var loopsUntilAutoAdvance;
   var loopIsChecked;
   var allowDupesIsChecked
   var autoAdvanceIsChecked;
-
-
+  
   function pollAllParameters(){
     //console.log("pollAllParameters");
 
-    // Notes Per Pattern =====================================================
-    notesPerPattern = parseInt(input_numNotesInput.val());
-
-    if(notesPerPattern < 1) {
-      notesPerPattern = 1;
-      input_numNotesInput.val(1);
-    }
-
-
-    // Min Semitones =====================================================
-    minSemitones = parseInt(input_minSemitonesInput.val());
-
-    if(minSemitones < 1) {
-      minSemitones = 1;
-      input_minSemitonesInput.val(1);
-    }
-
-    if(minSemitones > maxSemitones) {
-      minSemitones = maxSemitones;
-      input_minSemitonesInput.val(maxSemitones);
-    }
-
-    // Max Semitones =====================================================
-    maxSemitones = parseInt(input_maxSemitonesInput.val());
-
-    if(maxSemitones < minSemitones) {
-      maxSemitones = minSemitones;
-      input_maxSemitonesInput.val(minSemitones);
-    }
-
-    // Loop Step Duration (Seconds) ==========================================
-    loopStepDurationSeconds = parseFloat(input_patternSpeedInput.val());
-
-    if(loopStepDurationSeconds < 0.4) {
-      loopStepDurationSeconds = 0.4;
-      input_patternSpeedInput.val(0.4);
-    }
-
-    // Note Duration (no user input) =========================================
-    noteDurationSeconds     = loopStepDurationSeconds/notesPerPattern;
-
-    // Loop Step Duration (Seconds) ==========================================
-    loopsUntilAutoAdvance   = parseInt(input_numLoopsInput.val());
-    if(loopsUntilAutoAdvance < 1) {
-      loopsUntilAutoAdvance = 1;
-      input_numLoopsInput.val(1);
-    }
-
-    loopIsChecked           = input_loopCheckbox.is(':checked');
-    allowDupesIsChecked     = input_allowDupesCheckbox.is(':checked');
-    autoAdvanceIsChecked    = input_autoAdvanceCheckbox.is(':checked');
+    notesPerPattern = NotesPerPatternControl.value;
+    minSemitones = RangeMinControl.value;
+    maxSemitones = RangeMaxControl.value;
+    patternDurationSeconds = PatternDurationControl.value;
+    noteDurationSeconds     = patternDurationSeconds/notesPerPattern; //(no user input)
+    loopsUntilAutoAdvance   = NumLoopsControl.value;
+    loopIsChecked           = LoopPatternsControl.getBoolValue();
+    allowDupesIsChecked     = AllowDuplicatesControl.getBoolValue();
+    autoAdvanceIsChecked    = AutoAdvanceLoopControl.getBoolValue();
 
   };
 
@@ -117,7 +88,6 @@ $(document).ready(function(){
   var ignoreInput = false;
   var isPlaying   = false;
 
-  var inputTimeoutVar;
   var loopTimeoutVar;
 
   loopTimesPlayed = 0;
@@ -179,6 +149,7 @@ $(document).ready(function(){
     let oscGain = browserAudioContext.createGain();
 
     //Set unique values based on params
+    osc.type = "triangle";
     osc.frequency.value = midiToFreq(_note);
     oscGain.gain.setValueAtTime(0.0, _startTime);
 
@@ -228,24 +199,30 @@ $(document).ready(function(){
   //     UI Events
   //====================================================
   
-  $('#start').click(startButtonPressed);
-  $('#stop').click(stopButtonPressed);
-  $('#stop').addClass('disabled');
+  const playstop = document.querySelector("#playstop")
 
+  playstop.onclick = playstopPressed;
 
-  $('#params input').change(function(event){
-    $(event.target).blur();
+  PatternDurationControl.bindUpdateCallback(mControlUpdated);
+  NotesPerPatternControl.bindUpdateCallback(mControlUpdated);
+  AllowDuplicatesControl.bindUpdateCallback(mControlUpdated);
+  LoopPatternsControl.bindUpdateCallback(mControlUpdated);
+  AutoAdvanceLoopControl.bindUpdateCallback(mControlUpdated);
+  NumLoopsControl.bindUpdateCallback(mControlUpdated);
+  RangeMinControl.bindUpdateCallback(mControlUpdated);
+  RangeMaxControl.bindUpdateCallback(mControlUpdated);
+  
+  function mControlUpdated(){
     stopButtonPressed();
     pollAllParameters();
-
-  });
+  }
 
   window.onkeyup = function(e) {
     console.log("!! " + e.key);
     if(ignoreInput) return;
     if(e.key === " ") {
       if( isPlaying == false ) {
-        startButtonPressed();
+        playstopPressed();
       }else{
         stopButtonPressed();
       }
@@ -257,9 +234,12 @@ $(document).ready(function(){
   //     Start / Stop
   //====================================================
 
-  function startButtonPressed(){
-    if (isPlaying) return;
-    console.log(">startButtonPressed<");
+  function playstopPressed(){
+    if (isPlaying) {
+      stopButtonPressed();
+      return;
+    }
+    console.log(">playstopPressed<");
 
     stopAllNotes();
 
@@ -267,14 +247,9 @@ $(document).ready(function(){
 
     pollAllParameters();
     playNewPattern();
-    clearTimeout(inputTimeoutVar);
 
     //Aesthetic things
-    $("body").addClass('playing');
-    $('#start').addClass('disabled');
-    $('#start').text("RUNNING...");
-    $('#stop').removeClass('disabled');
-
+    playstop.textContent = "\u23F9";
     drawAllLoopDots();
   
   }
@@ -288,10 +263,8 @@ $(document).ready(function(){
     loopTimesPlayed = 0;
 
     //Aesthetic things
-    $("body").removeClass('playing');
-    $('#start').removeClass('disabled');
-    $('#start').text("PLAY");
-    $('#stop').addClass('disabled');
+
+    playstop.textContent = "\u25BA";
     removeAllLoopDots();
 
   }
@@ -390,7 +363,7 @@ $(document).ready(function(){
       cueSingleNote(n, volPercent, d);
     }
 
-    if( input_loopCheckbox.is(':checked') ){
+    if( loopIsChecked ){
       loopPattern();
     }else{
       window.setTimeout(function() { stopButtonPressed(); }, d*1000);
@@ -412,7 +385,7 @@ $(document).ready(function(){
   }
 
   function loopPattern(){
-    loopTimeoutVar = window.setTimeout(function() { loopTick(); }, loopStepDurationSeconds*1000);
+    loopTimeoutVar = window.setTimeout(function() { loopTick(); }, patternDurationSeconds*1000);
   }
 
   function loopTick(){
@@ -422,7 +395,7 @@ $(document).ready(function(){
       loopTimesPlayed = 0;
       removeAllLoopDotsHighlights();
 
-      if( input_autoAdvanceCheckbox.is(':checked') ){
+      if( autoAdvanceIsChecked ){
 
         stopAllNotes();
         playNewPattern();
@@ -445,15 +418,21 @@ $(document).ready(function(){
     removeAllLoopDots();
 
     for (var i = 0; i < numDots; i++) {
-      addLoopDot(i);
+      addLoopDot(i, numDots);
     }
 
   }
 
-  function addLoopDot(newId){
+  function addLoopDot(newId, _totalDots){
     var newDiv = $("<div>");
     $("#loopdots").append( newDiv );
     newDiv.addClass( "loopdot" ).prop('id', 'ld_'+newId);
+
+    var dotWidthInDvw = 100/_totalDots;
+    var str = dotWidthInDvw + "dvw";
+    // console.log("dot width is..." + str);
+    newDiv.css({"width":str});
+
     if(newId == 0) newDiv.addClass('firstdot');
   }
   
@@ -468,9 +447,36 @@ $(document).ready(function(){
   function removeAllLoopDotsHighlights(){
     $('.loopdot').removeClass('highlighted');
   }
+
   
 
+  //Instructions
 
+  var instructionsVisible = false;
+
+  const iiconEl = $("#i-icon");
+  const hideLinkEl = $("#collapse-link");
+  const instructionsEl = $("#instructions");
+
+  iiconEl.click(function(){
+    toggleInstructions();
+  });
+
+  hideLinkEl.click(function(){
+    toggleInstructions();
+  });
+
+
+  function toggleInstructions(){
+    if(instructionsVisible){
+      instructionsEl.slideUp();
+      instructionsVisible = false;
+    }else{
+      instructionsEl.slideDown();
+      instructionsVisible = true;
+    }
+
+  }
 
 });
   
