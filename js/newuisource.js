@@ -149,6 +149,7 @@ $(document).ready(function(){
     let oscGain = browserAudioContext.createGain();
 
     //Set unique values based on params
+    osc.type = "triangle";
     osc.frequency.value = midiToFreq(_note);
     oscGain.gain.setValueAtTime(0.0, _startTime);
 
