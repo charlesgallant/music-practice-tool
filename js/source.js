@@ -245,6 +245,8 @@ $(document).ready(function(){
       stopButtonPressed();
       return;
     }
+
+    //Play!
     console.log(">playstopPressed<");
 
     stopAllNotes();
@@ -257,7 +259,7 @@ $(document).ready(function(){
     //Aesthetic things
     playstop.textContent = "\u23F9";
     drawAllLoopDots();
-  
+    document.body.classList.add("playing");
   }
   function stopButtonPressed(){
     console.log(">stopButtonPressed<");
@@ -269,9 +271,9 @@ $(document).ready(function(){
     loopTimesPlayed = 0;
 
     //Aesthetic things
-
     playstop.textContent = "\u25BA";
     removeAllLoopDots();
+    document.body.classList.remove("playing");
 
   }
 
