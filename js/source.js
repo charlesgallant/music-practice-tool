@@ -3,44 +3,28 @@
 //mControl(_containerEl, _type, _defaultValue, _numericStepValue=null, _minVal=0, _maxVal=null)
 //=================================================================
 //Pattern Duration
-const PatternDurationControl = new mControl(
-  document.querySelector("#pattern-duration"), "number", 1.7, 0.05, 0.5, 30
-);
+const PatternDurationControl = new mControl( document.querySelector("#pattern-duration"), "number", 1.7, 0.05, 0.5, 30 );
 
 //Notes Per Pattern
-const NotesPerPatternControl = new mControl(
-  document.querySelector("#notes-per-pattern"), "number", 3, 1, 1, 64
-)
+const NotesPerPatternControl = new mControl( document.querySelector("#notes-per-pattern"), "number", 3, 1, 1, 64 )
 
 //Allow Duplicates (check)
-const AllowDuplicatesControl = new mControl(
-  document.querySelector("#allow-duplicates"), "checkbox", 1
-)
+const AllowDuplicatesControl = new mControl( document.querySelector("#allow-duplicates"), "checkbox", 1 )
 
 //Loop Patterns (check)
-const LoopPatternsControl = new mControl(
-  document.querySelector("#loop-pattern"), "checkbox", 1
-)
+const LoopPatternsControl = new mControl( document.querySelector("#loop-pattern"), "checkbox", 1 )
 
 //Auto Advance // Forever Mode (check)
-const AutoAdvanceLoopControl = new mControl(
-  document.querySelector("#auto-advance"), "checkbox", 1
-)
+const AutoAdvanceLoopControl = new mControl( document.querySelector("#auto-advance"), "checkbox", 1 )
 
 //Number of Loops
-const NumLoopsControl = new mControl(
-  document.querySelector("#num-loops"), "number", 4, 1, 1, 100
-)
+const NumLoopsControl = new mControl( document.querySelector("#num-loops"), "number", 4, 1, 1, 100 )
 
 //Range Min
-const RangeMinControl = new mControl(
-  document.querySelector("#range-min"), "number", 1, 1, 1, 100
-)
+const RangeMinControl = new mControl( document.querySelector("#range-min"), "number", 1, 1, 1, 100 )
 
 //Range Max
-const RangeMaxControl = new mControl(
-  document.querySelector("#range-max"), "number", 7, 1, 1, 100
-)
+const RangeMaxControl = new mControl( document.querySelector("#range-max"), "number", 7, 1, 1, 100 )
 
 const slider = document.getElementById("volumeSliderEl");
 var volumeSliderValue = 20;
@@ -65,7 +49,7 @@ $(document).ready(function(){
   var autoAdvanceIsChecked;
   
   function pollAllParameters(){
-    //console.log("pollAllParameters");
+    console.log("pollAllParameters");
 
     notesPerPattern = NotesPerPatternControl.value;
     minSemitones = RangeMinControl.value;
@@ -77,11 +61,34 @@ $(document).ready(function(){
     allowDupesIsChecked     = AllowDuplicatesControl.getBoolValue();
     autoAdvanceIsChecked    = AutoAdvanceLoopControl.getBoolValue();
 
+    //Set Dependencies ========================================
+    if(!loopIsChecked){
+      disableControl(AutoAdvanceLoopControl.containerEl);
+      disableControl(NumLoopsControl.containerEl);
+    }else{
+      enableControl(AutoAdvanceLoopControl.containerEl);
+      enableControl(NumLoopsControl.containerEl);
+    }
+
+    if(notesPerPattern < 2){
+      disableControl(AllowDuplicatesControl.containerEl);
+      disableControl(RangeMinControl.containerEl.parentNode);
+      disableControl(RangeMaxControl.containerEl.parentNode);
+    }else{
+      enableControl(AllowDuplicatesControl.containerEl);
+      enableControl(RangeMinControl.containerEl.parentNode);
+      enableControl(RangeMaxControl.containerEl.parentNode);
+    }
+
+
   };
 
   pollAllParameters();
 
-  //Sample Update
+  //====================================================
+  //     Init Basic Variables 
+  //====================================================
+
   var newPattern     = new Array();
   var currentPattern = new Array();
 
@@ -199,8 +206,7 @@ $(document).ready(function(){
   //     UI Events
   //====================================================
   
-  const playstop = document.querySelector("#playstop")
-
+  const playstop = document.querySelector("#playstop");
   playstop.onclick = playstopPressed;
 
   PatternDurationControl.bindUpdateCallback(mControlUpdated);
@@ -218,7 +224,7 @@ $(document).ready(function(){
   }
 
   window.onkeyup = function(e) {
-    console.log("!! " + e.key);
+    //console.log("!! " + e.key);
     if(ignoreInput) return;
     if(e.key === " ") {
       if( isPlaying == false ) {
@@ -269,6 +275,13 @@ $(document).ready(function(){
 
   }
 
+  function disableControl(_controlContainerElement){
+    _controlContainerElement.classList.add("c-button-disabled");
+  }
+
+  function enableControl(_controlContainerElement){
+    _controlContainerElement.classList.remove("c-button-disabled");
+  }
 
   //====================================================
   //     Pattern Creation / Playback / Loop
