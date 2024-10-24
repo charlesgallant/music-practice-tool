@@ -127,7 +127,7 @@
       color: #3c7293;
       font-size: 1.5em;
       /* align-content: center; */
-      border-radius: 12px;
+      border-radius: 6px;
       width: 60px;
       height: 40px;
       display: flex;
@@ -137,6 +137,7 @@
 
       box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.75);
       background-image: linear-gradient(#fff, #ccc);
+      cursor: pointer;
 
     }
 
@@ -148,17 +149,23 @@
     .c-button-disabled>div{
       opacity:0.4;
     }
+    /* li:has(> a.active) { */
+    .control-container:has(.check-on, .check-off){
+      cursor: pointer;
+    }
 
     .check-on, .check-off{
       font-size:1.9em;
+      
     }
     .check-on {
       color:darkgreen;
     }
-
     .check-off {
       color:darkred;
     }
+
+
 
     #footer-container {
       height: 80px;
