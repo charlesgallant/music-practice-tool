@@ -444,9 +444,9 @@ $(document).ready(function(){
     newDiv.addClass( "loopdot" ).prop('id', 'ld_'+newId);
 
     var dotWidthInDvw = 100/_totalDots;
-    var str = dotWidthInDvw + "dvw";
+    var str = dotWidthInDvw + "%";
     // console.log("dot width is..." + str);
-    newDiv.css({"width":str});
+    newDiv.css({"min-width":str});
 
     if(newId == 0) newDiv.addClass('firstdot');
   }
